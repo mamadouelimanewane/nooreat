@@ -1,0 +1,14 @@
+﻿src/navigation/AppNavigator.tsx(118,48): error TS2304: Cannot find name 'ReferralScreen'.
+src/screens/cart/CartScreen.tsx(120,14): error TS2304: Cannot find name 'ScrollView'.
+src/screens/cart/CartScreen.tsx(134,15): error TS2304: Cannot find name 'ScrollView'.
+src/screens/orders/OrderDetailScreen.tsx(79,27): error TS2339: Property 'center' does not exist on type '{ container: { flex: number; backgroundColor: string; }; header: { flexDirection: "row"; alignItems: "center"; paddingHorizontal: number; paddingVertical: number; backgroundColor: string; borderBottomWidth: number; borderBottomColor: string; gap: number; }; ... 47 more ...; totalFinalValue: { ...; }; }'.
+src/screens/profile/ProfileScreen.tsx(50,54): error TS2339: Property 'walletMoney' does not exist on type 'User'.
+src/screens/profile/ReferralScreen.tsx(19,32): error TS2339: Property 'referralCode' does not exist on type 'User'.
+src/screens/profile/ReferralScreen.tsx(37,17): error TS18047: 'user' is possibly 'null'.
+src/screens/wallet/WalletScreen.tsx(19,25): error TS2339: Property 'walletMoney' does not exist on type 'User'.
+src/screens/wallet/WalletScreen.tsx(35,71): error TS18047: 'user' is possibly 'null'.
+src/screens/wallet/WalletScreen.tsx(53,19): error TS18047: 'user' is possibly 'null'.
+src/screens/wallet/WalletScreen.tsx(60,11): error TS2554: Expected 2 arguments, but got 1.
+src/services/onesignal.ts(18,70): error TS7006: Parameter 'event' implicitly has an 'any' type.
+src/services/onesignal.ts(37,42): error TS2339: Property 'id' does not exist on type 'typeof pushSubscription'.
+src/services/onesignal.ts(41,42): error TS2551: Property 'optedIn' does not exist on type 'typeof pushSubscription'. Did you mean 'optIn'?

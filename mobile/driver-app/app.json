@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "NDUGUMi Driver",
+    "slug": "ndugumi-driver",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6366F1"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ndugumi.driverapp.test",
+      "buildNumber": "2"
+    },
+    "android": {
+      "package": "com.ndugumi.driverapp.test",
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#6366F1"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAK3BjGZQy70ogTMi1yr8W8Yw4YeeZ2PK8"
+        }
+      }
+    },
+    "plugins": [
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "NDUGUMi Driver utilise votre GPS pour les livraisons.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isIosBackgroundLocationEnabled": true
+        }
+      ],
+      "react-native-maps",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#6B6BD5"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "16c79e64-3d57-481f-80f9-bf7234ee3fcb"
+      }
+    },
+    "owner": "mamadouelimane"
+  }
+}

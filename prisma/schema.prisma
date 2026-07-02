@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  userId       Int      @unique @default(autoincrement())
+  name         String
+  phone        String?
+  email        String   @unique
+  password     String   @default("") // Adding password for Auth
+  walletMoney  Float    @default(0)
+  userType     String   @default("Retail")
+  signupType   String   @default("App/Admin")
+  signupFrom   String   @default("Application")
+  country      String?
+  status       String   @default("Active")
+  referralCode String?  @unique
+  referredBy   String?
+  registeredAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Driver {
+  id             String   @id @default(uuid())
+  driverId       Int      @unique @default(autoincrement())
+  name           String
+  phone          String?
+  email          String   @unique
+  password       String   @default("") // Adding password for Auth
+  serviceArea    String?
+  country        String?
+  totalOrders    Int      @default(0)
+  rating         Float    @default(0)
+  earning        Float    @default(0)
+  walletMoney    Float    @default(0)
+  status         String   @default("Offline")
+  approvalStatus String   @default("Approved")
+  lastLocation   String?
+  vehicleType    String?
+  registeredAt   DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Store {
+  id          String    @id @default(uuid())
+  name        String
+  phone       String?
+  email       String    @unique
+  address     String?
+  image       String?
+  loginUrl    String?
+  rating      Float     @default(5.0)
+  walletMoney Float     @default(0)
+  status      String    @default("Active")
+  serviceArea String?
+  segment     String    @default("RESTAURANT")
+  totalOrders Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  orders      Order[]
+  products    Product[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  status      String   @default("Active")
+  category    String?
+  storeId     String
+  store       Store    @relation(fields: [storeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  orderId   String   @unique
+  storeId   String
+  store     Store    @relation(fields: [storeId], references: [id])
+  userId    String?
+  driverId  String?
+  total     Float
+  status    String   @default("Pending")
+  items       Json
+  address     String?
+  deliveryPin String?  @default("0000")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id             String   @id @default(uuid())
+  name           String
+  segment        String   @default("Restaurant")
+  parentCategory String?
+  image          String?
+  sequence       Int      @default(1)
+  status         String   @default("Active")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PromoCode {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  discount  Float
+  type      String    @default("Percentage")
+  maxUses   Int?
+  usedCount Int       @default(0)
+  expiresAt DateTime?
+  status    String    @default("Active")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Country {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+}
+
+model ServiceArea {
+  id        String   @id @default(uuid())
+  name      String
+  country   String
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+}
+
+model Vehicle {
+  id        String   @id @default(uuid())
+  name      String
+  image     String?
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+}
+
+model SliderBanner {
+  id        String   @id @default(uuid())
+  title     String?
+  image     String
+  link      String?
+  sequence  Int      @default(1)
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  title     String
+  message   String
+  target    String    @default("All")
+  sentAt    DateTime?
+  status    String    @default("Draft")
+  createdAt DateTime  @default(now())
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String?
+  driverId    String?
+  amount      Float
+  type        String
+  method      String?  @default("Wallet")
+  description String?
+  status      String   @default("Completed")
+  createdAt   DateTime @default(now())
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("SubAdmin")
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,4 @@
+﻿src/app/(dashboard)/reports/earnings/page.tsx(72,5): error TS2657: JSX expressions must have one parent element.
+src/app/(dashboard)/reports/earnings/page.tsx(193,7): error TS1005: ')' expected.
+src/app/(dashboard)/reports/earnings/page.tsx(249,5): error TS1128: Declaration or statement expected.
+src/app/(dashboard)/reports/earnings/page.tsx(250,3): error TS1109: Expression expected.
