@@ -49,6 +49,12 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png",
     },
+    updates: {
+      url: "https://u.expo.dev/2c813298-042b-4c16-b139-a82c0790dc50",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
     plugins: [
       [
         "onesignal-expo-plugin",

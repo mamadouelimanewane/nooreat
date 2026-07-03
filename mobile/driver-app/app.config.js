@@ -29,6 +29,12 @@ module.exports = {
         },
       },
     },
+    updates: {
+      url: "https://u.expo.dev/16c79e64-3d57-481f-80f9-bf7234ee3fcb",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
     plugins: [
       [
         "onesignal-expo-plugin",
