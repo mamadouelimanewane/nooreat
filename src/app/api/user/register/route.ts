@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { signAuthToken } from "@/lib/authToken"
 
 export async function POST(req: Request) {
   try {
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
       }
     })
 
-    const token = `NOOR EAT_${newUser.id}_${Date.now()}`
+    const token = await signAuthToken(newUser.id)
 
     return NextResponse.json({
       user: {

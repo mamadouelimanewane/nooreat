@@ -11,13 +11,18 @@ async function main() {
   console.log('Seeding database with initial data...')
 
   // 1. Create a Super Admin
-  const hashedAdminPassword = await bcrypt.hash('admin123', 10)
+  const adminEmail = process.env.ADMIN_SEED_EMAIL
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD
+  if (!adminEmail || !adminPassword) {
+    throw new Error('ADMIN_SEED_EMAIL and ADMIN_SEED_PASSWORD must be set to seed the super admin account')
+  }
+  const hashedAdminPassword = await bcrypt.hash(adminPassword, 10)
   const admin = await prisma.admin.upsert({
-    where: { email: 'admin@ndugumi.com' },
-    update: {},
+    where: { email: adminEmail },
+    update: { password: hashedAdminPassword },
     create: {
       name: 'Super Admin',
-      email: 'admin@ndugumi.com',
+      email: adminEmail,
       password: hashedAdminPassword,
       role: 'SuperAdmin',
       status: 'Active',
@@ -62,12 +67,18 @@ async function main() {
   console.log('✅ User created:', user.email)
 
   // 4. Create a Store (Magasin)
+  const storeSeedPassword = process.env.STORE_SEED_PASSWORD
+  if (!storeSeedPassword) {
+    throw new Error('STORE_SEED_PASSWORD must be set to seed the demo store account')
+  }
+  const hashedStorePassword = await bcrypt.hash(storeSeedPassword, 10)
   const store = await prisma.store.upsert({
     where: { email: 'store@ndugumi.com' },
-    update: {},
+    update: { password: hashedStorePassword },
     create: {
       name: 'Ndugumi Market Principal',
       email: 'store@ndugumi.com',
+      password: hashedStorePassword,
       phone: '771112233',
       address: 'Plateau, Dakar',
       rating: 4.8,
@@ -79,25 +90,31 @@ async function main() {
   console.log('✅ Store created:', store.name)
 
   // 5. Create basic Categories & Products
-  const catFruits = await prisma.category.create({
-    data: {
-      name: 'Fruits et Légumes',
-      segment: 'Epicerie',
-      status: 'Active',
-    },
-  })
+  const existingCatFruits = await prisma.category.findFirst({ where: { name: 'Fruits et Légumes' } })
+  const catFruits =
+    existingCatFruits ??
+    (await prisma.category.create({
+      data: {
+        name: 'Fruits et Légumes',
+        segment: 'Epicerie',
+        status: 'Active',
+      },
+    }))
   console.log('✅ Category created:', catFruits.name)
 
-  await prisma.product.create({
-    data: {
-      name: 'Bananes Locales',
-      description: 'Bananes fraîches du Sénégal',
-      price: 1500,
-      status: 'Active',
-      category: 'Fruits et Légumes',
-      storeId: store.id,
-    },
-  })
+  const existingProduct = await prisma.product.findFirst({ where: { name: 'Bananes Locales', storeId: store.id } })
+  if (!existingProduct) {
+    await prisma.product.create({
+      data: {
+        name: 'Bananes Locales',
+        description: 'Bananes fraîches du Sénégal',
+        price: 1500,
+        status: 'Active',
+        category: 'Fruits et Légumes',
+        storeId: store.id,
+      },
+    })
+  }
   console.log('✅ Product created')
 
   // 6. Create a Driver

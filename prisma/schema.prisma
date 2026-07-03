@@ -50,23 +50,31 @@ model Driver {
 }
 
 model Store {
-  id          String    @id @default(uuid())
-  name        String
-  phone       String?
-  email       String    @unique
-  address     String?
-  image       String?
-  loginUrl    String?
-  rating      Float     @default(5.0)
-  walletMoney Float     @default(0)
-  status      String    @default("Active")
-  serviceArea String?
-  segment     String    @default("RESTAURANT")
-  totalOrders Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  orders      Order[]
-  products    Product[]
+  id                  String    @id @default(uuid())
+  name                String
+  phone               String?
+  email               String    @unique
+  password            String    @default("")
+  address             String?
+  image               String?
+  loginUrl            String?
+  rating              Float     @default(5.0)
+  walletMoney         Float     @default(0)
+  status              String    @default("Active")
+  serviceArea         String?
+  segment             String    @default("RESTAURANT")
+  totalOrders         Int       @default(0)
+  description         String?
+  minOrder            Float?
+  deliveryFee         Float?
+  deliveryTimeMinutes String?
+  openingHours        Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  orders              Order[]
+  products            Product[]
+  transactions        Transaction[]
+  reviews             Review[]
 }
 
 model Product {
@@ -172,12 +180,27 @@ model Transaction {
   id          String   @id @default(uuid())
   userId      String?
   driverId    String?
+  storeId     String?
+  store       Store?   @relation(fields: [storeId], references: [id])
   amount      Float
   type        String
   method      String?  @default("Wallet")
   description String?
   status      String   @default("Completed")
   createdAt   DateTime @default(now())
+}
+
+model Review {
+  id        String    @id @default(uuid())
+  storeId   String
+  store     Store     @relation(fields: [storeId], references: [id])
+  userId    String?
+  orderId   String?
+  rating    Int
+  comment   String?
+  reply     String?
+  repliedAt DateTime?
+  createdAt DateTime  @default(now())
 }
 
 model Admin {

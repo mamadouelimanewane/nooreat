@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { signAuthToken } from "@/lib/authToken"
 
 export async function POST(req: Request) {
   try {
@@ -29,8 +30,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Mot de passe incorrect" }, { status: 401 })
     }
 
-    // Mock token for now (in real app use JWT)
-    const token = `NOOR EAT_${user.id}_${Date.now()}`
+    const token = await signAuthToken(user.id)
 
     return NextResponse.json({
       user: {

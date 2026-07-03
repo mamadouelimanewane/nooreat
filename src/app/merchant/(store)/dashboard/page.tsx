@@ -1,12 +1,17 @@
 import { Suspense } from "react"
 import { ShoppingBag, TrendingUp, Star, Wallet, Clock, CheckCircle, XCircle, Truck, ArrowUp, ArrowDown } from "lucide-react"
 import { prisma } from "@/lib/prisma"
+import { getAuthedStoreId } from "@/lib/merchantSession"
 
-async function DashboardContent({ storeId }: { storeId: string }) {
-  // Fetch real data for this store from Prisma
-  // For demo purposes, if no storeId provided, we take the seeded one
-  const store = await prisma.store.findFirst({
-    where: storeId !== "1" ? { id: storeId } : { email: "store@NOOR EAT.com" },
+async function DashboardContent() {
+  const storeId = await getAuthedStoreId()
+  if (!storeId) {
+    return <div className="p-8 text-center text-gray-500">Non autorisé.</div>
+  }
+
+  // Fetch real data for the authenticated store from Prisma
+  const store = await prisma.store.findUnique({
+    where: { id: storeId },
     include: {
       _count: {
         select: {
@@ -99,7 +104,7 @@ async function DashboardContent({ storeId }: { storeId: string }) {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
             <h2 className="font-semibold text-gray-800">Commandes récentes</h2>
-            <a href={`/merchant/orders?store=${store.id}`} className="text-xs text-cyan-500 hover:underline font-medium">Voir tout →</a>
+            <a href="/merchant/orders" className="text-xs text-cyan-500 hover:underline font-medium">Voir tout →</a>
           </div>
           <div className="divide-y divide-gray-50">
             {recentOrders.length > 0 ? recentOrders.map((order) => (
@@ -141,13 +146,10 @@ async function DashboardContent({ storeId }: { storeId: string }) {
   )
 }
 
-export default async function MerchantDashboardPage({ searchParams }: { searchParams: Promise<{ store?: string }> }) {
-  const params = await searchParams
-  const storeId = params.store ?? "1"
-
+export default async function MerchantDashboardPage() {
   return (
     <Suspense fallback={<div className="flex justify-center pt-20">Chargement...</div>}>
-      <DashboardContent storeId={storeId} />
+      <DashboardContent />
     </Suspense>
   )
 }

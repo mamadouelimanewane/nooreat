@@ -113,22 +113,13 @@ export default async function DashboardPage() {
             { label: "Envoyer notification", href: "/notifications", emoji: "🔔" },
           ].map(link => (
             <a key={link.href} href={link.href} style={{ textDecoration: 'none' }}>
-              <div className="ne-card" style={{
+              <div className="ne-card ne-quicklink-card" style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
                 cursor: 'pointer',
                 transition: 'transform 0.15s, border-color 0.15s'
-              }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'
-                  ;(e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(6,193,103,0.3)'
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLDivElement).style.transform = ''
-                  ;(e.currentTarget as HTMLDivElement).style.borderColor = ''
-                }}
-              >
+              }}>
                 <span style={{ fontSize: '22px' }}>{link.emoji}</span>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ne-text-primary)' }}>{link.label}</span>
               </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { Suspense, useState } from "react"
-import { useSearchParams, usePathname } from "next/navigation"
+import { Suspense, useEffect, useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Wallet,
@@ -10,14 +10,25 @@ import {
 } from "lucide-react"
 import { Loader2 } from "lucide-react"
 
-const mockStores: Record<string, { name: string; email: string; slug: string }> = {
-  "1": { name: "Marché Dior", email: "Marchedior@gmail.com", slug: "marche-dior" },
-  "2": { name: "Le Marché des Professionnels", email: "NOOR EATpro@gmail.com", slug: "marche-pro" },
-  "3": { name: "Service Traiteur", email: "NOOR EATtraiteur@gmail.com", slug: "service-traiteur" },
-  "4": { name: "France Mangasin test", email: "ndame.kital@lNOOR EAT.com", slug: "france-test" },
-  "5": { name: "MARCHE RUFISQUE1", email: "marcherufisque1@gmail.com", slug: "rufisque-1" },
-  "6": { name: "Marché Rufisque", email: "marcherufisque25@gmail.com", slug: "marche-rufisque" },
-  "7": { name: "Marché Keur Massar", email: "marchekeurmassar@gmail.com", slug: "keur-massar" },
+type AuthedStore = { id: string; name: string; email: string; segment: string }
+
+function useAuthedStore() {
+  const router = useRouter()
+  const [store, setStore] = useState<AuthedStore | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/merchant/me")
+      .then((res) => {
+        if (!res.ok) throw new Error("unauthorized")
+        return res.json()
+      })
+      .then((data) => setStore(data.store))
+      .catch(() => router.replace("/merchant/login"))
+      .finally(() => setLoading(false))
+  }, [router])
+
+  return { store, loading }
 }
 
 const navItems = [
@@ -31,9 +42,8 @@ const navItems = [
   { href: "/merchant/settings", icon: Settings, label: "Paramètres" },
 ]
 
-function MerchantSidebar({ storeId, mobile, onClose }: { storeId: string; mobile?: boolean; onClose?: () => void }) {
+function MerchantSidebar({ store, mobile, onClose, onLogout }: { store: AuthedStore; mobile?: boolean; onClose?: () => void; onLogout: () => void }) {
   const pathname = usePathname()
-  const store = mockStores[storeId] ?? { name: "Mon Magasin", email: "", slug: "" }
 
   return (
     <aside className={`${mobile ? "w-full" : "w-64"} bg-[#2d3a4a] text-white flex flex-col h-full`}>
@@ -66,7 +76,7 @@ function MerchantSidebar({ storeId, mobile, onClose }: { storeId: string; mobile
           return (
             <Link
               key={item.href}
-              href={`${item.href}?store=${storeId}`}
+              href={item.href}
               onClick={onClose}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active
@@ -89,29 +99,41 @@ function MerchantSidebar({ storeId, mobile, onClose }: { storeId: string; mobile
 
       {/* Footer */}
       <div className="px-3 py-4 border-t border-white/10">
-        <a
-          href="/merchant/login"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
         >
           <LogOut size={18} />
           <span>Déconnexion</span>
-        </a>
+        </button>
       </div>
     </aside>
   )
 }
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
-  const searchParams = useSearchParams()
-  const storeId = searchParams.get("store") ?? "1"
-  const store = mockStores[storeId] ?? { name: "Mon Magasin", email: "", slug: "" }
+  const router = useRouter()
+  const { store, loading } = useAuthedStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  async function handleLogout() {
+    await fetch("/api/merchant/logout", { method: "POST" })
+    router.replace("/merchant/login")
+  }
+
+  if (loading || !store) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 size={32} className="text-cyan-500 animate-spin" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-col h-full">
-        <MerchantSidebar storeId={storeId} />
+        <MerchantSidebar store={store} onLogout={handleLogout} />
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -119,7 +141,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="absolute left-0 top-0 h-full w-72 z-10">
-            <MerchantSidebar storeId={storeId} mobile onClose={() => setSidebarOpen(false)} />
+            <MerchantSidebar store={store} mobile onClose={() => setSidebarOpen(false)} onLogout={handleLogout} />
           </div>
         </div>
       )}
