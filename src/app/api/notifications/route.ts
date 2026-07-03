@@ -17,7 +17,13 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' }
     })
 
-    return NextResponse.json(notifications, { headers: { "Access-Control-Allow-Origin": "*" } })
+    const reads = await prisma.notificationRead.findMany({
+      where: { userId: user.id, notificationId: { in: notifications.map((n) => n.id) } },
+    })
+    const readIds = new Set(reads.map((r) => r.notificationId))
+    const enriched = notifications.map((n) => ({ ...n, read: readIds.has(n.id) }))
+
+    return NextResponse.json(enriched, { headers: { "Access-Control-Allow-Origin": "*" } })
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 })
   }

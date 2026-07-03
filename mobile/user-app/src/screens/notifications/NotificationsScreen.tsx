@@ -1,38 +1,57 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
-  View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView,
+  View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, ActivityIndicator,
 } from "react-native"
 import { COLORS, FONTS, SPACING, RADIUS } from "../../constants/theme"
 import { useStore } from "../../store/useStore"
+import { notificationsAPI } from "../../services/api"
 
-const NOTIFS = [
-  { id: "1", type: "order", title: "Commande confirmée", body: "Votre commande #ORD-1234 a été confirmée par le marchand.", time: "Il y a 2 min", read: false, emoji: "✅" },
-  { id: "2", type: "delivery", title: "Livreur en route", body: "Mamadou est en route vers votre adresse. Livraison estimée : 15 min.", time: "Il y a 18 min", read: false, emoji: "🛵" },
-  { id: "3", type: "promo", title: "Offre exclusive 🎉", body: "Profitez de -20% sur toutes les commandes ce soir avec le code NDUGUMI20.", time: "Il y a 1h", read: true, emoji: "🎁" },
-  { id: "4", type: "order", title: "Commande livrée", body: "Votre commande #ORD-1230 a été livrée avec succès.", time: "Hier, 14:30", read: true, emoji: "📦" },
-  { id: "5", type: "wallet", title: "Portefeuille rechargé", body: "Votre portefeuille a été crédité de 5 000 FCFA.", time: "Hier, 09:00", read: true, emoji: "💰" },
-  { id: "6", type: "promo", title: "Nouveau marchand disponible", body: "Marché Bio Dakar est maintenant disponible dans votre zone.", time: "Il y a 2 jours", read: true, emoji: "🏪" },
-]
+type Notif = { id: string; title: string; message: string; createdAt: string; read: boolean }
 
-type FilterType = "all" | "order" | "promo" | "wallet"
+type FilterType = "all" | "unread"
 
 export default function NotificationsScreen({ navigation }: any) {
   const [filter, setFilter] = useState<FilterType>("all")
-  const [notifs, setNotifs] = useState(NOTIFS)
+  const [notifs, setNotifs] = useState<Notif[]>([])
+  const [loading, setLoading] = useState(true)
   const setUnreadCount = useStore((s) => s.setUnreadCount)
 
-  const filtered = filter === "all" ? notifs : notifs.filter((n) => n.type === filter)
-  const unread = notifs.filter((n) => !n.read).length
+  useEffect(() => {
+    loadNotifications()
+  }, [])
 
-  const markAllRead = () => {
-    setNotifs(notifs.map((n) => ({ ...n, read: true })))
-    setUnreadCount(0)
+  async function loadNotifications() {
+    setLoading(true)
+    try {
+      const res = await notificationsAPI.getAll()
+      setNotifs(res.data)
+      setUnreadCount(res.data.filter((n: Notif) => !n.read).length)
+    } catch (e) {
+      console.log("Error loading notifications", e)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const markRead = (id: string) => {
-    setNotifs(notifs.map((n) => n.id === id ? { ...n, read: true } : n))
+  const filtered = filter === "all" ? notifs : notifs.filter((n) => !n.read)
+  const unread = notifs.filter((n) => !n.read).length
+
+  const markAllRead = async () => {
+    const unreadNotifs = notifs.filter((n) => !n.read)
+    setNotifs(notifs.map((n) => ({ ...n, read: true })))
+    setUnreadCount(0)
+    await Promise.all(unreadNotifs.map((n) => notificationsAPI.markRead(n.id)))
+  }
+
+  const markRead = async (id: string) => {
+    setNotifs(notifs.map((n) => (n.id === id ? { ...n, read: true } : n)))
     const newUnread = notifs.filter((n) => !n.read && n.id !== id).length
     setUnreadCount(newUnread)
+    try {
+      await notificationsAPI.markRead(id)
+    } catch (e) {
+      console.log("Error marking read", e)
+    }
   }
 
   return (
@@ -52,46 +71,56 @@ export default function NotificationsScreen({ navigation }: any) {
 
       {/* Filters */}
       <View style={styles.filters}>
-        {(["all", "order", "promo", "wallet"] as FilterType[]).map((f) => (
+        {(["all", "unread"] as FilterType[]).map((f) => (
           <TouchableOpacity
             key={f}
             onPress={() => setFilter(f)}
             style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
           >
             <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>
-              {f === "all" ? "Tout" : f === "order" ? "Commandes" : f === "promo" ? "Promos" : "Wallet"}
+              {f === "all" ? "Tout" : "Non lues"}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <FlatList
-        data={filtered}
-        keyExtractor={(i) => i.id}
-        contentContainerStyle={{ padding: SPACING.lg, gap: SPACING.sm }}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyEmoji}>🔔</Text>
-            <Text style={styles.emptyText}>Aucune notification</Text>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.notifCard, !item.read && styles.notifCardUnread]}
-            onPress={() => markRead(item.id)}
-          >
-            <View style={styles.notifIconWrap}>
-              <Text style={styles.notifEmoji}>{item.emoji}</Text>
+      {loading ? (
+        <View style={styles.empty}>
+          <ActivityIndicator color={COLORS.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={(i) => i.id}
+          refreshing={loading}
+          onRefresh={loadNotifications}
+          contentContainerStyle={{ padding: SPACING.lg, gap: SPACING.sm }}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <Text style={styles.emptyEmoji}>🔔</Text>
+              <Text style={styles.emptyText}>Aucune notification</Text>
             </View>
-            <View style={styles.notifContent}>
-              <Text style={[styles.notifTitle, !item.read && styles.notifTitleUnread]}>{item.title}</Text>
-              <Text style={styles.notifBody} numberOfLines={2}>{item.body}</Text>
-              <Text style={styles.notifTime}>{item.time}</Text>
-            </View>
-            {!item.read && <View style={styles.unreadDot} />}
-          </TouchableOpacity>
-        )}
-      />
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.notifCard, !item.read && styles.notifCardUnread]}
+              onPress={() => markRead(item.id)}
+            >
+              <View style={styles.notifIconWrap}>
+                <Text style={styles.notifEmoji}>🔔</Text>
+              </View>
+              <View style={styles.notifContent}>
+                <Text style={[styles.notifTitle, !item.read && styles.notifTitleUnread]}>{item.title}</Text>
+                <Text style={styles.notifBody} numberOfLines={2}>{item.message}</Text>
+                <Text style={styles.notifTime}>
+                  {new Date(item.createdAt).toLocaleDateString("fr-FR")} {new Date(item.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                </Text>
+              </View>
+              {!item.read && <View style={styles.unreadDot} />}
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </SafeAreaView>
   )
 }

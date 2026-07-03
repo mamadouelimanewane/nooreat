@@ -5,7 +5,7 @@ import {
 } from "react-native"
 import { COLORS, FONTS, SPACING, RADIUS } from "../../constants/theme"
 import { useStore } from "../../store/useStore"
-import axios from "axios"
+import { walletAPI } from "../../services/api"
 
 const PAYMENT_METHODS = [
   { id: "Orange Money", label: "Orange Money", emoji: "🟠", color: "#FF6600" },
@@ -24,15 +24,13 @@ export default function WalletScreen({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(false)
   const [transactions, setTransactions] = useState<any[]>([])
 
-  const API_URL = process.env.EXPO_PUBLIC_API_URL || "https://ndugumi.vercel.app/api"
-
   useEffect(() => {
     if (user?.id) fetchHistory()
   }, [user?.id])
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get(`${API_URL}/wallet/history?userId=${user?.id}`)
+      const res = await walletAPI.getTransactions()
       setTransactions(res.data)
     } catch (error) {
       console.log("History err", error)
@@ -50,12 +48,8 @@ export default function WalletScreen({ navigation }: any) {
     setTimeout(async () => {
       try {
         if (!user) return
-        const res = await axios.post(`${API_URL}/wallet/topup`, {
-          userId: user.id,
-          amount: Number(amount),
-          method: selectedMethod
-        })
-        
+        const res = await walletAPI.recharge(Number(amount), selectedMethod)
+
         // Update local user context
         if (res.data.walletMoney !== undefined) {
           updateUser({ walletMoney: res.data.walletMoney })

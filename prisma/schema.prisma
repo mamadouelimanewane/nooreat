@@ -176,6 +176,15 @@ model Notification {
   createdAt DateTime  @default(now())
 }
 
+model NotificationRead {
+  id             String   @id @default(uuid())
+  notificationId String
+  userId         String
+  readAt         DateTime @default(now())
+
+  @@unique([notificationId, userId])
+}
+
 model Transaction {
   id          String   @id @default(uuid())
   userId      String?

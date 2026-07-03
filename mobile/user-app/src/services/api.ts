@@ -50,16 +50,15 @@ export const categoriesAPI = {
 // ── Orders ────────────────────────────────────────────────────────
 export const ordersAPI = {
   create: (data: any) => api.post("/orders", data),
-  getAll: () => api.get("/orders/my"),
+  getAll: () => api.get("/orders"),
   getById: (id: string) => api.get(`/orders/${id}`),
-  track: (id: string) => api.get(`/orders/${id}/track`),
 }
 
 // ── Wallet ────────────────────────────────────────────────────────
 export const walletAPI = {
   getBalance: () => api.get("/wallet/balance"),
-  getTransactions: () => api.get("/wallet/transactions"),
-  recharge: (amount: number) => api.post("/wallet/recharge", { amount }),
+  getTransactions: () => api.get("/wallet/history"),
+  recharge: (amount: number, method: string) => api.post("/wallet/topup", { amount, method }),
 }
 
 // ── Notifications ─────────────────────────────────────────────────

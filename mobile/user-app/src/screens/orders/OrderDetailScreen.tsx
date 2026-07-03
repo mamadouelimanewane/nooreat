@@ -17,7 +17,7 @@ export default function OrderDetailScreen({ route, navigation }: any) {
 
   React.useEffect(() => {
     let interval: any
-    if (order && order.status !== "DELIVERED" && order.status !== "CANCELLED") {
+    if (order && order.status !== "Completed" && order.status !== "Cancelled") {
       interval = setInterval(fetchOrderUpdate, 10000) // Poll every 10s
     }
     return () => clearInterval(interval)
@@ -63,16 +63,14 @@ export default function OrderDetailScreen({ route, navigation }: any) {
 
   const getStepStatus = (status: string) => {
     const steps = [
-      { id: 1, label: "Commande confirmée", icon: "✅", done: true },
-      { id: 2, label: "En préparation", icon: "👨‍🍳", done: ["PREPARING", "READY", "PICKED_UP", "DELIVERED"].includes(status) },
-      { id: 3, label: "Livreur assigné", icon: "🛵", done: ["PICKED_UP", "DELIVERED"].includes(status), active: ["ASSIGNED", "ACCEPTED"].includes(status) },
-      { id: 4, label: "En route vers vous", icon: "📍", done: status === "DELIVERED", active: status === "PICKED_UP" },
-      { id: 5, label: "Livré", icon: "🏠", done: status === "DELIVERED", active: status === "DELIVERED" },
+      { id: 1, label: "Commande confirmée", icon: "✅", done: true, active: status === "Pending" },
+      { id: 2, label: "En préparation", icon: "👨‍🍳", done: ["Processing", "Completed"].includes(status), active: status === "Processing" },
+      { id: 3, label: "Livré", icon: "🏠", done: status === "Completed", active: status === "Completed" },
     ]
     return steps
   }
 
-  const STEPS = getStepStatus(order?.status || "PENDING")
+  const STEPS = getStepStatus(order?.status || "Pending")
   
   if (!order) {
     return (
@@ -146,7 +144,7 @@ export default function OrderDetailScreen({ route, navigation }: any) {
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.md }}>
             <Text style={styles.cardTitle}>🛥 Suivi en temps réel</Text>
-            {["PICKED_UP", "ACCEPTED", "ASSIGNED"].includes(order.status) && (
+            {order.status === "Processing" && (
               <TouchableOpacity 
                 style={styles.mapBtn} 
                 onPress={() => navigation.navigate("ActiveDelivery", { order })}

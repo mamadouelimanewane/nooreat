@@ -1,24 +1,31 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { getAuthUser } from "@/lib/auth"
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url)
-    const userId = searchParams.get('userId')
-
-    if (!userId) {
-      return NextResponse.json({ message: "userId is required" }, { status: 400 })
-    }
+    const user = await getAuthUser(req)
+    if (!user) return NextResponse.json({ message: "Non autorisé" }, { status: 401 })
 
     const transactions = await prisma.transaction.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      take: 20
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 20,
     })
 
-    return NextResponse.json(transactions)
+    return NextResponse.json(transactions, { headers: { "Access-Control-Allow-Origin": "*" } })
   } catch (error: any) {
-    console.error("Wallet History Error:", error)
     return NextResponse.json({ message: error.message }, { status: 500 })
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  })
 }

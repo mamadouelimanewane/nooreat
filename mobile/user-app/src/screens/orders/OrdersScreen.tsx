@@ -4,6 +4,7 @@ import { COLORS, FONTS, SPACING, RADIUS } from "../../constants/theme"
 import { ordersAPI } from "../../services/api"
 
 const TABS = ["Tous", "En cours", "Livré", "Annulé"]
+const STATUS_LABELS: Record<string, string> = { Pending: "En attente", Processing: "En cours", Completed: "Livré", Cancelled: "Annulé" }
 
 export default function OrdersScreen({ navigation }: any) {
   const [activeTab, setActiveTab] = useState("Tous")
@@ -26,8 +27,9 @@ export default function OrdersScreen({ navigation }: any) {
     }
   }
 
+  const TAB_TO_STATUS: Record<string, string> = { "En cours": "Processing", "Livré": "Completed", "Annulé": "Cancelled" }
   const filtered = orders.filter(
-    (o) => activeTab === "Tous" || o.status.toLowerCase().includes(activeTab.toLowerCase().replace("en cours", "pending").replace("livré", "delivered").replace("annulé", "cancelled"))
+    (o) => activeTab === "Tous" || o.status === TAB_TO_STATUS[activeTab]
   )
 
   return (
@@ -66,11 +68,11 @@ export default function OrdersScreen({ navigation }: any) {
                 <Text style={styles.orderId}>{item.id || item._id}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: (item.statusColor || COLORS.info) + "20" }]}>
                   <Text style={[styles.statusText, { color: item.statusColor || COLORS.info }]}>
-                    {item.emoji || "📦"} {item.status}
+                    {item.emoji || "📦"} {STATUS_LABELS[item.status] || item.status}
                   </Text>
                 </View>
               </View>
-              <Text style={styles.orderDate}>{item.date}</Text>
+              <Text style={styles.orderDate}>{new Date(item.createdAt).toLocaleDateString("fr-FR")}</Text>
             </View>
 
             <View style={styles.divider} />
@@ -82,15 +84,15 @@ export default function OrdersScreen({ navigation }: any) {
 
             <View style={styles.orderFooter}>
               <Text style={styles.orderTotal}>{item.total.toLocaleString()} FCFA</Text>
-              {item.status === "Livré" && (
-                <TouchableOpacity 
+              {item.status === "Completed" && (
+                <TouchableOpacity
                   style={styles.reorderBtn}
                   onPress={() => Alert.alert("Recommander", "Cette commande a été ajoutée à votre panier")}
                 >
                   <Text style={styles.reorderText}>↺ Recommander</Text>
                 </TouchableOpacity>
               )}
-              {(item.status === "En cours" || item.status === "Deliverign" || item.status === "Pending") && (
+              {(item.status === "Pending" || item.status === "Processing") && (
                 <TouchableOpacity 
                   style={styles.trackBtn}
                   onPress={() => navigation.navigate("OrderDetail", { order: item })}
