@@ -1,27 +1,54 @@
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import {
-  View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView,
+  View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, ActivityIndicator,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
+import { notificationsAPI } from "../../services/api"
 
 const COLORS = {
   primary: "#6B6BD5", bg: "#F5F5F5", white: "#FFFFFF",
   text: "#212121", sub: "#757575", border: "#E0E0E0",
-  green: "#4CAF50", orange: "#FF9800",
 }
 
-const NOTIFS = [
-  { id: "1", type: "order", emoji: "📦", title: "Nouvelle commande disponible", body: "Commande #ORD-3255 — 3.2 km — +950 FCFA", time: "Il y a 1 min", read: false },
-  { id: "2", type: "payment", emoji: "💰", title: "Paiement reçu", body: "Vous avez reçu 800 FCFA pour la livraison ORD-3253.", time: "Il y a 20 min", read: false },
-  { id: "3", type: "system", emoji: "⚙️", title: "Mise à jour de l'application", body: "Une nouvelle version est disponible. Mettez à jour pour les dernières fonctionnalités.", time: "Il y a 2h", read: true },
-  { id: "4", type: "order", emoji: "🌟", title: "Évaluation reçue", body: "Fatou Diallo vous a donné une note de 5 étoiles !", time: "Hier, 18:00", read: true },
-  { id: "5", type: "payment", emoji: "💸", title: "Cashout effectué", body: "Virement de 15 000 FCFA vers votre compte Orange Money.", time: "Hier, 09:30", read: true },
-]
+type Notif = { id: string; title: string; message: string; createdAt: string; read: boolean }
 
 export default function NotificationsScreen({ navigation }: any) {
-  const [notifs, setNotifs] = useState(NOTIFS)
+  const [notifs, setNotifs] = useState<Notif[]>([])
+  const [loading, setLoading] = useState(true)
   const unread = notifs.filter((n) => !n.read).length
 
-  const markAllRead = () => setNotifs(notifs.map((n) => ({ ...n, read: true })))
+  useFocusEffect(
+    useCallback(() => {
+      load()
+    }, [])
+  )
+
+  async function load() {
+    setLoading(true)
+    try {
+      const res = await notificationsAPI.getAll()
+      setNotifs(res.data)
+    } catch (e) {
+      console.log("Error loading notifications", e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const markAllRead = async () => {
+    const toMark = notifs.filter((n) => !n.read)
+    setNotifs(notifs.map((n) => ({ ...n, read: true })))
+    await Promise.all(toMark.map((n) => notificationsAPI.markRead(n.id)))
+  }
+
+  const markRead = async (id: string) => {
+    setNotifs(notifs.map((n) => (n.id === id ? { ...n, read: true } : n)))
+    try {
+      await notificationsAPI.markRead(id)
+    } catch (e) {
+      console.log("Error marking read", e)
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,33 +64,43 @@ export default function NotificationsScreen({ navigation }: any) {
         )}
       </View>
 
-      <FlatList
-        data={notifs}
-        keyExtractor={(i) => i.id}
-        contentContainerStyle={{ padding: 16, gap: 10 }}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={{ fontSize: 48 }}>🔔</Text>
-            <Text style={styles.emptyText}>Aucune notification</Text>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.card, !item.read && styles.cardUnread]}
-            onPress={() => setNotifs(notifs.map((n) => n.id === item.id ? { ...n, read: true } : n))}
-          >
-            <View style={styles.iconWrap}>
-              <Text style={{ fontSize: 24 }}>{item.emoji}</Text>
+      {loading ? (
+        <View style={styles.empty}>
+          <ActivityIndicator color={COLORS.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={notifs}
+          keyExtractor={(i) => i.id}
+          refreshing={loading}
+          onRefresh={load}
+          contentContainerStyle={{ padding: 16, gap: 10 }}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <Text style={{ fontSize: 48 }}>🔔</Text>
+              <Text style={styles.emptyText}>Aucune notification</Text>
             </View>
-            <View style={styles.content}>
-              <Text style={[styles.notifTitle, !item.read && styles.notifTitleUnread]}>{item.title}</Text>
-              <Text style={styles.notifBody} numberOfLines={2}>{item.body}</Text>
-              <Text style={styles.notifTime}>{item.time}</Text>
-            </View>
-            {!item.read && <View style={styles.unreadDot} />}
-          </TouchableOpacity>
-        )}
-      />
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.card, !item.read && styles.cardUnread]}
+              onPress={() => markRead(item.id)}
+            >
+              <View style={styles.iconWrap}>
+                <Text style={{ fontSize: 24 }}>🔔</Text>
+              </View>
+              <View style={styles.content}>
+                <Text style={[styles.notifTitle, !item.read && styles.notifTitleUnread]}>{item.title}</Text>
+                <Text style={styles.notifBody} numberOfLines={2}>{item.message}</Text>
+                <Text style={styles.notifTime}>
+                  {new Date(item.createdAt).toLocaleDateString("fr-FR")} {new Date(item.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                </Text>
+              </View>
+              {!item.read && <View style={styles.unreadDot} />}
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </SafeAreaView>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import {
   View,
   Text,
@@ -6,35 +6,40 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useDriverStore } from "../../store/useDriverStore"
+import { earningsAPI } from "../../services/api"
 
-const PERIODS = ["Aujourd'hui", "Semaine", "Mois"]
+const PERIODS = ["Aujourd'hui", "Semaine"]
 
-const weeklyData = [
-  { day: "Lun", earnings: 3500, orders: 5 },
-  { day: "Mar", earnings: 4200, orders: 6 },
-  { day: "Mer", earnings: 2800, orders: 4 },
-  { day: "Jeu", earnings: 5100, orders: 7 },
-  { day: "Ven", earnings: 4800, orders: 6 },
-  { day: "Sam", earnings: 6200, orders: 9 },
-  { day: "Dim", earnings: 3200, orders: 4 },
-]
-
-const recentHistory = [
-  { id: "ORD-3253", date: "Aujourd'hui, 14:30", from: "Marché Keur Massar", to: "Cité Fadia", amount: 800 },
-  { id: "ORD-3248", date: "Aujourd'hui, 11:15", from: "Marché Rufisque", to: "HLM Grand Yoff", amount: 1000 },
-  { id: "ORD-3241", date: "Hier, 18:45", from: "Supério Almadies", to: "Les Almadies", amount: 600 },
-  { id: "ORD-3237", date: "Hier, 16:00", from: "Marché Sandaga", to: "Plateau Dakar", amount: 750 },
-  { id: "ORD-3229", date: "Hier, 12:30", from: "City Sport Dakar", to: "Point E, Dakar", amount: 900 },
-]
+type WeekPoint = { label: string; earnings: number; orders: number }
+type HistoryTx = { id: string; description: string | null; amount: number; createdAt: string }
 
 export default function EarningsScreen() {
-  const { todayEarnings, todayOrders } = useDriverStore()
+  const { driver } = useDriverStore()
   const [activePeriod, setActivePeriod] = useState(0)
+  const [todayEarnings, setTodayEarnings] = useState(0)
+  const [todayOrders, setTodayOrders] = useState(0)
+  const [weekSeries, setWeekSeries] = useState<WeekPoint[]>([])
+  const [history, setHistory] = useState<HistoryTx[]>([])
 
-  const maxEarning = Math.max(...weeklyData.map((d) => d.earnings))
-  const weekTotal = weeklyData.reduce((s, d) => s + d.earnings, 0)
-  const weekOrders = weeklyData.reduce((s, d) => s + d.orders, 0)
+  useFocusEffect(
+    useCallback(() => {
+      earningsAPI.getSummary().then((res) => {
+        setTodayEarnings(res.data.todayEarnings)
+        setTodayOrders(res.data.todayOrders)
+        setWeekSeries(res.data.weekSeries)
+      })
+      earningsAPI.getHistory().then((res) => setHistory(res.data))
+    }, [])
+  )
+
+  const maxEarning = Math.max(1, ...weekSeries.map((d) => d.earnings))
+  const weekTotal = weekSeries.reduce((s, d) => s + d.earnings, 0)
+  const weekOrders = weekSeries.reduce((s, d) => s + d.orders, 0)
+
+  const totalDisplayed = activePeriod === 0 ? todayEarnings : weekTotal
+  const ordersDisplayed = activePeriod === 0 ? todayOrders : weekOrders
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -56,75 +61,65 @@ export default function EarningsScreen() {
       {/* Main KPI */}
       <View style={styles.mainKpi}>
         <Text style={styles.kpiLabel}>Total des gains</Text>
-        <Text style={styles.kpiValue}>
-          {activePeriod === 0
-            ? todayEarnings.toLocaleString()
-            : activePeriod === 1
-            ? weekTotal.toLocaleString()
-            : (weekTotal * 4).toLocaleString()}{" "}
-          FCFA
-        </Text>
-        <Text style={styles.kpiSub}>
-          {activePeriod === 0 ? todayOrders : activePeriod === 1 ? weekOrders : weekOrders * 4} livraisons
-        </Text>
+        <Text style={styles.kpiValue}>{totalDisplayed.toLocaleString()} FCFA</Text>
+        <Text style={styles.kpiSub}>{ordersDisplayed} livraisons</Text>
       </View>
 
       {/* Sub stats */}
       <View style={styles.subStatsRow}>
         <View style={styles.subStat}>
           <Text style={styles.subStatValue}>
-            {activePeriod === 0
-              ? (todayOrders > 0 ? Math.round(todayEarnings / todayOrders) : 0)
-              : Math.round(weekTotal / weekOrders)}{" "}
-            FCFA
+            {ordersDisplayed > 0 ? Math.round(totalDisplayed / ordersDisplayed) : 0} FCFA
           </Text>
           <Text style={styles.subStatLabel}>Gain moyen</Text>
         </View>
         <View style={[styles.subStat, styles.subStatMiddle]}>
-          <Text style={styles.subStatValue}>
-            {activePeriod === 0 ? todayOrders : activePeriod === 1 ? weekOrders : weekOrders * 4}
-          </Text>
+          <Text style={styles.subStatValue}>{ordersDisplayed}</Text>
           <Text style={styles.subStatLabel}>Livraisons</Text>
         </View>
         <View style={styles.subStat}>
-          <Text style={styles.subStatValue}>4.8 ⭐</Text>
+          <Text style={styles.subStatValue}>{driver?.rating ?? "—"} ⭐</Text>
           <Text style={styles.subStatLabel}>Note moy.</Text>
         </View>
       </View>
 
       {/* Weekly bar chart */}
-      {activePeriod >= 1 && (
+      {activePeriod === 1 && (
         <View style={styles.chartCard}>
           <Text style={styles.chartTitle}>Gains de la semaine</Text>
-          <View style={styles.chartBars}>
-            {weeklyData.map((d) => (
-              <View key={d.day} style={styles.barWrapper}>
-                <Text style={styles.barValue}>{(d.earnings / 1000).toFixed(1)}k</Text>
-                <View style={styles.barContainer}>
-                  <View
-                    style={[
-                      styles.bar,
-                      { height: Math.max(10, (d.earnings / maxEarning) * 100) },
-                    ]}
-                  />
+          {weekSeries.length === 0 ? (
+            <Text style={styles.emptyText}>Aucun gain sur les 7 derniers jours.</Text>
+          ) : (
+            <View style={styles.chartBars}>
+              {weekSeries.map((d) => (
+                <View key={d.label} style={styles.barWrapper}>
+                  <Text style={styles.barValue}>{(d.earnings / 1000).toFixed(1)}k</Text>
+                  <View style={styles.barContainer}>
+                    <View
+                      style={[
+                        styles.bar,
+                        { height: Math.max(10, (d.earnings / maxEarning) * 100) },
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.barLabel}>{d.label}</Text>
                 </View>
-                <Text style={styles.barLabel}>{d.day}</Text>
-              </View>
-            ))}
-          </View>
+              ))}
+            </View>
+          )}
         </View>
       )}
 
       {/* History */}
       <View style={styles.historySection}>
         <Text style={styles.historyTitle}>Historique récent</Text>
-        {recentHistory.map((item) => (
+        {history.length === 0 && <Text style={styles.emptyText}>Aucune livraison rémunérée pour le moment.</Text>}
+        {history.map((item) => (
           <View key={item.id} style={styles.historyItem}>
             <View style={styles.historyLeft}>
-              <Text style={styles.historyId}>{item.id}</Text>
-              <Text style={styles.historyDate}>{item.date}</Text>
-              <Text style={styles.historyRoute} numberOfLines={1}>
-                {item.from} → {item.to}
+              <Text style={styles.historyId}>{item.description}</Text>
+              <Text style={styles.historyDate}>
+                {new Date(item.createdAt).toLocaleDateString("fr-FR")} {new Date(item.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
               </Text>
             </View>
             <Text style={styles.historyAmount}>+{item.amount} FCFA</Text>
@@ -226,6 +221,7 @@ const styles = StyleSheet.create({
   barLabel: { fontSize: 10, color: "#888", marginTop: 6 },
   historySection: { marginHorizontal: 16 },
   historyTitle: { fontSize: 15, fontWeight: "700", color: "#333", marginBottom: 12 },
+  emptyText: { fontSize: 13, color: "#999", fontStyle: "italic" },
   historyItem: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -243,6 +239,5 @@ const styles = StyleSheet.create({
   historyLeft: { flex: 1 },
   historyId: { fontSize: 13, fontWeight: "600", color: "#333" },
   historyDate: { fontSize: 11, color: "#999", marginTop: 2 },
-  historyRoute: { fontSize: 12, color: "#666", marginTop: 3 },
   historyAmount: { fontSize: 15, fontWeight: "700", color: "#4CAF50" },
 })

@@ -1,34 +1,89 @@
-import React, { useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
   Switch,
   Dimensions,
+  RefreshControl,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useDriverStore } from "../../store/useDriverStore"
 import { COLORS, RADIUS } from "../../constants/theme"
+import { authAPI, ordersAPI, earningsAPI } from "../../services/api"
 
 const { width } = Dimensions.get("window")
 
-export default function HomeScreen({ navigation }: any) {
-  const {
-    driver,
-    isOnline,
-    toggleOnline,
-    pendingOrders,
-    currentOrder,
-    todayEarnings,
-    todayOrders,
-    acceptOrder,
-  } = useDriverStore()
+type AvailableOrder = {
+  id: string
+  storeAddress: string
+  deliveryAddress: string
+  items: number
+  distance: string
+  earnings: number
+}
 
-  const handleAccept = (order: any) => {
-    acceptOrder(order)
-    navigation.navigate("ActiveDelivery")
+export default function HomeScreen({ navigation }: any) {
+  const { driver, isOnline, setOnline } = useDriverStore()
+  const [pendingOrders, setPendingOrders] = useState<AvailableOrder[]>([])
+  const [currentOrder, setCurrentOrder] = useState<any>(null)
+  const [todayEarnings, setTodayEarnings] = useState(0)
+  const [todayOrders, setTodayOrders] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const loadData = useCallback(async () => {
+    try {
+      const [activeRes, earningsRes] = await Promise.all([
+        ordersAPI.getActive(),
+        earningsAPI.getSummary(),
+      ])
+      setCurrentOrder(activeRes.data[0] ?? null)
+      setTodayEarnings(earningsRes.data.todayEarnings)
+      setTodayOrders(earningsRes.data.todayOrders)
+
+      if (isOnline && !activeRes.data[0]) {
+        const availableRes = await ordersAPI.getAvailable()
+        setPendingOrders(availableRes.data)
+      } else {
+        setPendingOrders([])
+      }
+    } catch (e) {
+      console.log("Error loading home data", e)
+    }
+  }, [isOnline])
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData()
+    }, [loadData])
+  )
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    await loadData()
+    setRefreshing(false)
+  }
+
+  const handleToggleOnline = async () => {
+    const next = !isOnline
+    setOnline(next)
+    try {
+      await authAPI.setOnlineStatus(next)
+    } catch (e) {
+      console.log("Error updating status", e)
+    }
+  }
+
+  const handleAccept = async (order: AvailableOrder) => {
+    try {
+      await ordersAPI.accept(order.id)
+      navigation.navigate("ActiveDelivery")
+      loadData()
+    } catch (e: any) {
+      console.log("Error accepting order", e)
+    }
   }
 
   return (
@@ -51,7 +106,7 @@ export default function HomeScreen({ navigation }: any) {
             </Text>
             <Switch
               value={isOnline}
-              onValueChange={toggleOnline}
+              onValueChange={handleToggleOnline}
               trackColor={{ false: COLORS.grayMedium, true: COLORS.primaryLight }}
               thumbColor={isOnline ? COLORS.primary : COLORS.white}
             />
@@ -76,15 +131,19 @@ export default function HomeScreen({ navigation }: any) {
           </View>
           <View style={styles.statCard}>
             <View style={[styles.statIconCircle, { backgroundColor: "#FFFBEB" }]}>
-              <Text style={{ fontSize: 18 }}>📢</Text>
+              <Text style={{ fontSize: 18 }}>⭐</Text>
             </View>
-            <Text style={styles.statValue}>98%</Text>
-            <Text style={styles.statLabel}>Acceptation</Text>
+            <Text style={styles.statValue}>{driver?.rating ?? "—"}</Text>
+            <Text style={styles.statLabel}>Note</Text>
           </View>
         </View>
       </View>
 
-      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         {/* Active Delivery Focus */}
         {currentOrder && (
           <View style={styles.section}>
@@ -97,11 +156,9 @@ export default function HomeScreen({ navigation }: any) {
               <View style={styles.activeOrderGlow} />
               <View style={styles.activeOrderContent}>
                 <View style={styles.activeOrderHeader}>
-                  <Text style={styles.activeOrderId}>ID: {currentOrder.id.slice(-6)}</Text>
+                  <Text style={styles.activeOrderId}>{currentOrder.orderId}</Text>
                   <View style={styles.activeBadge}>
-                    <Text style={styles.activeBadgeText}>
-                      {currentOrder.status === "accepted" ? "À COLLECTER" : "EN CHEMIN"}
-                    </Text>
+                    <Text style={styles.activeBadgeText}>EN COURS</Text>
                   </View>
                 </View>
                 <View style={styles.routeContainer}>
@@ -132,17 +189,9 @@ export default function HomeScreen({ navigation }: any) {
             </View>
             {pendingOrders.map((order) => (
               <View key={order.id} style={styles.requestCard}>
-                {order.isBatched && (
-                  <View style={{ backgroundColor: "#FEF3C7", paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
-                    <Text style={{ marginRight: 6 }}>🔄</Text>
-                    <Text style={{ fontSize: 12, fontWeight: "800", color: "#B45309" }}>
-                      TRAJET GROUPÉ : {order.batchedOrdersCount} commandes sur la même route
-                    </Text>
-                  </View>
-                )}
-                <View style={[styles.requestMain, order.isBatched && { backgroundColor: "#FFFBEB" }]}>
+                <View style={styles.requestMain}>
                   <View style={styles.requestHeader}>
-                    <Text style={styles.requestId}>{order.isBatched ? "Commandes Multiples" : `Commande #${order.id.slice(-4)}`}</Text>
+                    <Text style={styles.requestId}>Commande #{order.id.slice(-4)}</Text>
                     <Text style={styles.requestEarnings}>+{order.earnings} FCFA</Text>
                   </View>
                   <View style={styles.requestRoute}>
@@ -162,9 +211,7 @@ export default function HomeScreen({ navigation }: any) {
                 </View>
                 <View style={styles.requestActions}>
                   <TouchableOpacity activeOpacity={0.7} style={styles.acceptBtn} onPress={() => handleAccept(order)}>
-                    <Text style={styles.acceptBtnText}>
-                      {order.isBatched ? `ACCEPTER LES ${order.batchedOrdersCount} MISSIONS` : "ACCEPTER LA MISSION"}
-                    </Text>
+                    <Text style={styles.acceptBtnText}>ACCEPTER LA MISSION</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -189,7 +236,7 @@ export default function HomeScreen({ navigation }: any) {
             <Text style={{ fontSize: 48, marginBottom: 20 }}>💤</Text>
             <Text style={styles.emptyTitle}>Vous êtes en pause</Text>
             <Text style={styles.emptyDesc}>Activez votre statut pour commencer à gagner de l'argent.</Text>
-            <TouchableOpacity activeOpacity={0.8} style={styles.goOnlineBtn} onPress={toggleOnline}>
+            <TouchableOpacity activeOpacity={0.8} style={styles.goOnlineBtn} onPress={handleToggleOnline}>
               <Text style={styles.goOnlineText}>PASSER EN LIGNE</Text>
             </TouchableOpacity>
           </View>

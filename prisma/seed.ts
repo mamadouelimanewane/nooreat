@@ -118,12 +118,18 @@ async function main() {
   console.log('✅ Product created')
 
   // 6. Create a Driver
+  const driverSeedPassword = process.env.DRIVER_SEED_PASSWORD
+  if (!driverSeedPassword) {
+    throw new Error('DRIVER_SEED_PASSWORD must be set to seed the demo driver account')
+  }
+  const hashedDriverPassword = await bcrypt.hash(driverSeedPassword, 10)
   const driver = await prisma.driver.upsert({
     where: { email: 'driver@ndugumi.com' },
-    update: {},
+    update: { password: hashedDriverPassword },
     create: {
       name: 'Livreur Pro',
       email: 'driver@ndugumi.com',
+      password: hashedDriverPassword,
       phone: '772223344',
       serviceArea: 'Dakar',
       vehicleType: 'Moto',

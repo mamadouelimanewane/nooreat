@@ -179,10 +179,12 @@ model Notification {
 model NotificationRead {
   id             String   @id @default(uuid())
   notificationId String
-  userId         String
+  userId         String?
+  driverId       String?
   readAt         DateTime @default(now())
 
   @@unique([notificationId, userId])
+  @@unique([notificationId, driverId])
 }
 
 model Transaction {

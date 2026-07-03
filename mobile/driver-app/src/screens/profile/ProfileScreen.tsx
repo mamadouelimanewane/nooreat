@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback } from "react"
 import {
   View,
   Text,
@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useDriverStore } from "../../store/useDriverStore"
+import { authAPI } from "../../services/api"
 
 const MENU_ITEMS = [
   { icon: "📄", label: "Mes documents", screen: "Documents" },
@@ -21,7 +23,13 @@ const MENU_ITEMS = [
 ]
 
 export default function ProfileScreen({ navigation }: any) {
-  const { driver, logout, todayEarnings, todayOrders } = useDriverStore()
+  const { driver, logout, updateDriver } = useDriverStore()
+
+  useFocusEffect(
+    useCallback(() => {
+      authAPI.getProfile().then((res) => updateDriver(res.data)).catch(() => {})
+    }, [])
+  )
 
   const handleLogout = () => {
     Alert.alert("Déconnexion", "Voulez-vous vous déconnecter ?", [
@@ -75,7 +83,10 @@ export default function ProfileScreen({ navigation }: any) {
             {(driver?.walletBalance ?? 0).toLocaleString()} FCFA
           </Text>
         </View>
-        <TouchableOpacity style={styles.withdrawBtn}>
+        <TouchableOpacity
+          style={styles.withdrawBtn}
+          onPress={() => Alert.alert("Retrait", "Le retrait de fonds sera disponible après vérification de votre compte par notre équipe.")}
+        >
           <Text style={styles.withdrawBtnText}>Retirer 💳</Text>
         </TouchableOpacity>
       </View>

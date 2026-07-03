@@ -11,7 +11,9 @@ import {
   Alert,
 } from "react-native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import * as SecureStore from "expo-secure-store"
 import { useDriverStore } from "../../store/useDriverStore"
+import { authAPI } from "../../services/api"
 
 type Props = {
   navigation: NativeStackNavigationProp<any>
@@ -30,22 +32,16 @@ export default function LoginScreen({ navigation }: Props) {
       return
     }
     setLoading(true)
-    setTimeout(() => {
-      setDriver(
-        {
-          id: "DRV-001",
-          name: "Moussa Diallo",
-          phone: "+221 77 123 45 67",
-          email: "moussa.diallo@ndugumi.com",
-          vehicleType: "Moto",
-          rating: 4.8,
-          totalOrders: 247,
-          walletBalance: 15400,
-        },
-        "mock-driver-token-123"
-      )
+    try {
+      const res = await authAPI.login(phone, password)
+      const { driver, token } = res.data
+      await SecureStore.setItemAsync("driver_token", token)
+      setDriver(driver, token)
+    } catch (error: any) {
+      Alert.alert("Erreur de connexion", error.response?.data?.message || error.message)
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   return (

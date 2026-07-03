@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react"
 import {
-  View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Linking, Dimensions
+  View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Linking, Dimensions, ActivityIndicator
 } from "react-native"
 import * as Location from "expo-location"
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps"
 import { LOCATIONIQ_DIRECTIONS_URL, decodePolyline } from "../../constants/maps"
-import { useDriverStore } from "../../store/useDriverStore"
+import { ordersAPI } from "../../services/api"
 
 const STEPS = [
   { key: "accepted", label: "Aller au magasin", icon: "🏪", desc: "En route vers le point de collecte" },
@@ -14,19 +14,23 @@ const STEPS = [
 ]
 
 export default function ActiveDeliveryScreen({ navigation }: any) {
-  const { currentOrder, setCurrentOrder, completeDelivery } = useDriverStore()
+  const [currentOrder, setCurrentOrder] = useState<any>(null)
+  const [loadingOrder, setLoadingOrder] = useState(true)
   const [step, setStep] = useState(0)
 
-  if (!currentOrder) {
-    navigation.goBack()
-    return null
-  }
+  useEffect(() => {
+    ordersAPI.getActive().then((res) => {
+      setCurrentOrder(res.data[0] ?? null)
+      setLoadingOrder(false)
+    })
+  }, [])
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null)
   const [routeCoords, setRouteCoords] = useState<{ latitude: number; longitude: number }[]>([])
 
   useEffect(() => {
-    (async () => {
+    if (!currentOrder) return
+    ;(async () => {
       const { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
         Alert.alert("Permission GPS refusée", "Veuillez autoriser la géolocalisation pour un suivi optimal.")
@@ -64,18 +68,15 @@ export default function ActiveDeliveryScreen({ navigation }: any) {
         ])
       }
     })()
-  }, [])
+  }, [currentOrder])
 
   const handleNextStep = async () => {
     try {
-      const { ordersAPI } = await import("../../services/api")
       if (step === 0) {
         await ordersAPI.updateStatus(currentOrder.id, "PICKED_UP")
-        setCurrentOrder({ ...currentOrder, status: "pickedup" })
         setStep(1)
       } else if (step === 1) {
         await ordersAPI.updateStatus(currentOrder.id, "DELIVERED")
-        setCurrentOrder({ ...currentOrder, status: "delivered" })
         setStep(2)
       } else {
         Alert.alert(
@@ -84,10 +85,7 @@ export default function ActiveDeliveryScreen({ navigation }: any) {
           [
             {
               text: "Super !",
-              onPress: () => {
-                completeDelivery()
-                navigation.navigate("Home")
-              },
+              onPress: () => navigation.navigate("Home"),
             },
           ]
         )
@@ -108,6 +106,19 @@ export default function ActiveDeliveryScreen({ navigation }: any) {
 
   const stepLabels = ["Récupérer", "Récupéré ✓", "Livré ✓"]
   const btnColors = ["#FF9800", "#6B6BD5", "#4CAF50"]
+
+  if (loadingOrder) {
+    return (
+      <View style={[styles.container, { alignItems: "center", justifyContent: "center" }]}>
+        <ActivityIndicator color="#6B6BD5" size="large" />
+      </View>
+    )
+  }
+
+  if (!currentOrder) {
+    navigation.goBack()
+    return null
+  }
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

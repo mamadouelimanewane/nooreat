@@ -1,8 +1,10 @@
-import React from "react"
+import React, { useCallback, useState } from "react"
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { useDriverStore } from "../../store/useDriverStore"
+import { ordersAPI } from "../../services/api"
 
 const COLORS = {
   primary: "#6B6BD5", bg: "#F5F5F5", white: "#FFFFFF",
@@ -11,11 +13,39 @@ const COLORS = {
 }
 
 export default function OrdersScreen({ navigation }: any) {
-  const { pendingOrders, isOnline, acceptOrder, currentOrder } = useDriverStore()
+  const { isOnline } = useDriverStore()
+  const [pendingOrders, setPendingOrders] = useState<any[]>([])
+  const [currentOrder, setCurrentOrder] = useState<any>(null)
 
-  const handleAccept = (order: any) => {
-    acceptOrder(order)
-    navigation.navigate("ActiveDelivery")
+  useFocusEffect(
+    useCallback(() => {
+      ordersAPI.getActive().then((res) => {
+        setCurrentOrder(res.data[0] ?? null)
+        if (!res.data[0] && isOnline) {
+          ordersAPI.getAvailable().then((r) => setPendingOrders(r.data))
+        } else {
+          setPendingOrders([])
+        }
+      })
+    }, [isOnline])
+  )
+
+  const handleAccept = async (order: any) => {
+    try {
+      await ordersAPI.accept(order.id)
+      navigation.navigate("ActiveDelivery")
+    } catch (e) {
+      console.log("Error accepting order", e)
+    }
+  }
+
+  const handleReject = async (order: any) => {
+    try {
+      await ordersAPI.reject(order.id)
+      setPendingOrders((prev) => prev.filter((o) => o.id !== order.id))
+    } catch (e) {
+      console.log("Error rejecting order", e)
+    }
   }
 
   if (!isOnline) {
@@ -43,7 +73,7 @@ export default function OrdersScreen({ navigation }: any) {
 
       {currentOrder && (
         <TouchableOpacity style={styles.activeOrderBanner} onPress={() => navigation.navigate("ActiveDelivery")}>
-          <Text style={styles.activeOrderText}>🛵 Livraison en cours — {currentOrder.id}</Text>
+          <Text style={styles.activeOrderText}>🛵 Livraison en cours — {currentOrder.orderId}</Text>
           <Text style={styles.activeOrderArrow}>→</Text>
         </TouchableOpacity>
       )}
@@ -63,7 +93,7 @@ export default function OrdersScreen({ navigation }: any) {
           <View style={styles.orderCard}>
             {/* Header */}
             <View style={styles.orderHeader}>
-              <Text style={styles.orderId}>{item.id}</Text>
+              <Text style={styles.orderId}>{item.orderId}</Text>
               <View style={styles.earningsBadge}>
                 <Text style={styles.earningsText}>+{item.earnings.toLocaleString()} FCFA</Text>
               </View>
@@ -107,7 +137,7 @@ export default function OrdersScreen({ navigation }: any) {
 
             {/* Actions */}
             <View style={styles.actions}>
-              <TouchableOpacity style={styles.rejectBtn}>
+              <TouchableOpacity style={styles.rejectBtn} onPress={() => handleReject(item)}>
                 <Text style={styles.rejectText}>Refuser</Text>
               </TouchableOpacity>
               <TouchableOpacity
