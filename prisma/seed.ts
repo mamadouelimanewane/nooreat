@@ -53,11 +53,11 @@ async function main() {
 
   // 3. Create a User
   const user = await prisma.user.upsert({
-    where: { email: 'client@ndugumi.com' },
+    where: { email: 'client@nooreat.com' },
     update: {},
     create: {
       name: 'Client Test',
-      email: 'client@ndugumi.com',
+      email: 'client@nooreat.com',
       phone: '770000000',
       walletMoney: 5000,
       userType: 'Retail',
@@ -73,11 +73,11 @@ async function main() {
   }
   const hashedStorePassword = await bcrypt.hash(storeSeedPassword, 10)
   const store = await prisma.store.upsert({
-    where: { email: 'store@ndugumi.com' },
+    where: { email: 'store@nooreat.com' },
     update: { password: hashedStorePassword },
     create: {
       name: 'Ndugumi Market Principal',
-      email: 'store@ndugumi.com',
+      email: 'store@nooreat.com',
       password: hashedStorePassword,
       phone: '771112233',
       address: 'Plateau, Dakar',
@@ -124,11 +124,11 @@ async function main() {
   }
   const hashedDriverPassword = await bcrypt.hash(driverSeedPassword, 10)
   const driver = await prisma.driver.upsert({
-    where: { email: 'driver@ndugumi.com' },
+    where: { email: 'driver@nooreat.com' },
     update: { password: hashedDriverPassword },
     create: {
       name: 'Livreur Pro',
-      email: 'driver@ndugumi.com',
+      email: 'driver@nooreat.com',
       password: hashedDriverPassword,
       phone: '772223344',
       serviceArea: 'Dakar',
