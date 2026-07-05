@@ -9,7 +9,7 @@ import { CART_EVENT } from "../../layout"
 type Product = { id: string; name: string; price: number; description: string | null; image: string; category: string | null }
 type Store = {
   id: string; name: string; location: string | null; rating: number; deliveryTime: string
-  minOrder: number; emoji: string; cuisine: string; description: string | null; deliveryFee: number
+  minOrder: number; emoji: string; photo: string | null; cuisine: string; description: string | null; deliveryFee: number
 }
 
 export default function StorePage({ params }: { params: Promise<{ id: string }> }) {
@@ -67,14 +67,18 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
   return (
     <div className="pb-28">
       {/* Hero banner */}
-      <div className="bg-gradient-to-br from-neutral-100 to-neutral-50 h-40 sm:h-52 flex items-center justify-center">
-        <span className="text-7xl sm:text-8xl">{store.emoji}</span>
+      <div className="relative bg-gradient-to-br from-neutral-100 to-neutral-50 h-40 sm:h-52 flex items-center justify-center overflow-hidden">
+        {store.photo ? (
+          <img src={store.photo} alt={store.name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-7xl sm:text-8xl">{store.emoji}</span>
+        )}
       </div>
 
       <div className="max-w-3xl mx-auto px-4">
         {/* Info card */}
         <div className="bg-[#fff] rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] -mt-8 relative p-5 mb-6">
-          <h1 className="text-xl font-extrabold mb-1">{store.name}</h1>
+          <h1 className="text-xl font-extrabold mb-1">{store.emoji} {store.name}</h1>
           {store.description && <p className="text-neutral-500 text-sm mb-3">{store.description}</p>}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-700">
             <span className="flex items-center gap-1 font-semibold"><Star size={14} className="fill-black" /> {store.rating.toFixed(1)}</span>

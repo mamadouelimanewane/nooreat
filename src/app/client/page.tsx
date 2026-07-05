@@ -12,6 +12,7 @@ type Store = {
   deliveryTime: string
   minOrder: number
   emoji: string
+  photo: string | null
   cuisine: string
   description: string | null
   deliveryFee: number
@@ -97,7 +98,18 @@ export default function ClientHome() {
           {filtered.map((s, i) => (
             <Link key={s.id} href={`/client/store/${s.id}`} className="group">
               <div className={`relative aspect-[4/3] rounded-2xl ${CARD_COLORS[i % CARD_COLORS.length]} flex items-center justify-center overflow-hidden mb-2.5`}>
-                <span className="text-6xl group-hover:scale-110 transition-transform duration-200">{s.emoji}</span>
+                {s.photo ? (
+                  <img
+                    src={s.photo}
+                    alt={s.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                  />
+                ) : (
+                  <span className="text-6xl group-hover:scale-110 transition-transform duration-200">{s.emoji}</span>
+                )}
+                <span className="absolute top-2 left-2 w-7 h-7 rounded-full bg-[#fff]/95 backdrop-blur flex items-center justify-center text-sm">
+                  {s.emoji}
+                </span>
                 <span className="absolute bottom-2 left-2 bg-[#fff]/95 backdrop-blur px-2 py-0.5 rounded-md text-[11px] font-bold flex items-center gap-1">
                   <Star size={11} className="fill-black" /> {s.rating.toFixed(1)}
                 </span>

@@ -74,7 +74,7 @@ async function main() {
   const hashedStorePassword = await bcrypt.hash(storeSeedPassword, 10)
   const store = await prisma.store.upsert({
     where: { email: 'store@nooreat.com' },
-    update: { password: hashedStorePassword, name: 'NOOR Market Plateau', cuisine: 'Épicerie' },
+    update: { password: hashedStorePassword, name: 'NOOR Market Plateau', cuisine: 'Épicerie', image: 'https://loremflickr.com/600/400/grocery,market/all?lock=216' },
     create: {
       name: 'NOOR Market Plateau',
       email: 'store@nooreat.com',
@@ -86,6 +86,7 @@ async function main() {
       serviceArea: 'Dakar',
       segment: 'GROCERY',
       cuisine: 'Épicerie',
+      image: 'https://loremflickr.com/600/400/grocery,market/all?lock=216',
     },
   })
   console.log('✅ Store created:', store.name)
@@ -148,6 +149,7 @@ async function main() {
     phone: string
     address: string
     image: string
+    photo: string
     rating: number
     category: string
     description: string
@@ -157,6 +159,10 @@ async function main() {
     products: SeedProduct[]
   }
 
+  function photoUrl(tag: string, lock: number): string {
+    return `https://loremflickr.com/600/400/${tag}/all?lock=${lock}`
+  }
+
   const restaurants: SeedStore[] = [
     {
       name: 'Chez Loutcha',
@@ -164,6 +170,7 @@ async function main() {
       phone: '338211234',
       address: 'Rue Parchappe x Carnot, Plateau, Dakar',
       image: '🍛',
+      photo: photoUrl('senegalese,food', 201),
       rating: 4.7,
       category: 'Sénégalaise',
       description: 'Institution dakaroise, cuisine sénégalaise et capverdienne généreuse.',
@@ -184,6 +191,7 @@ async function main() {
       phone: '338219876',
       address: 'Rue Vincens, Plateau, Dakar',
       image: '🐟',
+      photo: photoUrl("senegalese,rice", 202),
       rating: 4.6,
       category: 'Sénégalaise',
       description: 'Cuisine traditionnelle sénégalaise au cœur du Plateau.',
@@ -203,6 +211,7 @@ async function main() {
       phone: '338501122',
       address: 'Route de la Corniche, Yoff, Dakar',
       image: '🍚',
+      photo: photoUrl('grilledfish,food', 203),
       rating: 4.5,
       category: 'Sénégalaise',
       description: 'Vue sur l\'océan et grands classiques sénégalais.',
@@ -222,6 +231,7 @@ async function main() {
       phone: '338601133',
       address: 'Route des Almadies, Ouakam, Dakar',
       image: '🥘',
+      photo: photoUrl('africanfood', 204),
       rating: 4.4,
       category: 'Sénégalaise',
       description: 'Cadre chaleureux, décor africain, cuisine locale authentique.',
@@ -241,6 +251,7 @@ async function main() {
       phone: '338221144',
       address: 'Route de la Corniche Est, Dakar',
       image: '🦐',
+      photo: photoUrl('seafood,platter', 205),
       rating: 4.6,
       category: 'Fruits de mer',
       description: 'Fruits de mer face à l\'océan, une adresse emblématique de Dakar.',
@@ -260,6 +271,7 @@ async function main() {
       phone: '338601155',
       address: 'Plage de Ngor, Dakar',
       image: '🦞',
+      photo: photoUrl('lobster,seafood', 206),
       rating: 4.3,
       category: 'Fruits de mer',
       description: 'Les pieds dans le sable face à l\'île de Ngor.',
@@ -279,6 +291,7 @@ async function main() {
       phone: '338701166',
       address: 'Sacré-Cœur 3, Dakar',
       image: '🍢',
+      photo: photoUrl('grill,meat', 207),
       rating: 4.5,
       category: 'Grillades',
       description: 'Viande grillée à la sénégalaise, ambiance conviviale.',
@@ -298,6 +311,7 @@ async function main() {
       phone: '338801177',
       address: 'Mermoz, Dakar',
       image: '🍕',
+      photo: photoUrl('pizza', 208),
       rating: 4.2,
       category: 'Pizzeria',
       description: 'Pizzas artisanales cuites au four à bois.',
@@ -317,6 +331,7 @@ async function main() {
       phone: '338901188',
       address: 'Route de Ngor, Yoff, Dakar',
       image: '🍣',
+      photo: photoUrl('sushi', 209),
       rating: 4.4,
       category: 'Japonais',
       description: 'Sushis frais et cuisine japonaise à Dakar.',
@@ -336,6 +351,7 @@ async function main() {
       phone: '338111199',
       address: 'Almadies, Dakar',
       image: '🍜',
+      photo: photoUrl('thaifood', 210),
       rating: 4.5,
       category: 'Asiatique',
       description: 'Saveurs thaïlandaises authentiques dans un cadre verdoyant.',
@@ -358,6 +374,7 @@ async function main() {
       phone: '338221100',
       address: 'Route de Ouakam, Mermoz, Dakar',
       image: '🍗',
+      photo: photoUrl('friedchicken', 211),
       rating: 4.3,
       category: 'Fast Food',
       description: 'Poulet frit croustillant, la référence mondiale à Dakar.',
@@ -377,6 +394,7 @@ async function main() {
       phone: '338331101',
       address: 'Route de Ouakam, Dakar',
       image: '🍔',
+      photo: photoUrl('burger', 212),
       rating: 4.6,
       category: 'Fast Food',
       description: 'Burgers gourmands façon brésilienne, une valeur sûre à Dakar.',
@@ -396,6 +414,7 @@ async function main() {
       phone: '338441102',
       address: 'Ouakam, Dakar',
       image: '🍕',
+      photo: photoUrl('pizza,fastfood', 213),
       rating: 4.4,
       category: 'Fast Food',
       description: 'Pizzas, tacos et snacks livrés rapidement.',
@@ -415,6 +434,7 @@ async function main() {
       phone: '338551103',
       address: 'Sacré-Cœur, Dakar',
       image: '🌯',
+      photo: photoUrl('kebab', 214),
       rating: 4.5,
       category: 'Fast Food',
       description: 'Kebabs savoureux et snacks variés, réputés à Dakar.',
@@ -434,6 +454,7 @@ async function main() {
       phone: '338661104',
       address: 'Plateau, Dakar',
       image: '🥐',
+      photo: photoUrl('bakery,pastry', 215),
       rating: 4.4,
       category: 'Fast Food',
       description: 'Chaîne locale fondée en 2002 : viennoiseries, sandwichs et snacks.',
@@ -452,14 +473,14 @@ async function main() {
   for (const seedStore of [...restaurants, ...fastFoods]) {
     const createdStore = await prisma.store.upsert({
       where: { email: seedStore.email },
-      update: { cuisine: seedStore.category },
+      update: { cuisine: seedStore.category, image: seedStore.photo },
       create: {
         name: seedStore.name,
         email: seedStore.email,
         password: hashedStorePassword,
         phone: seedStore.phone,
         address: seedStore.address,
-        image: seedStore.image,
+        image: seedStore.photo,
         rating: seedStore.rating,
         status: 'Active',
         serviceArea: 'Dakar',
