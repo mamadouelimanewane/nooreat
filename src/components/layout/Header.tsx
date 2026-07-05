@@ -1,10 +1,10 @@
 "use client"
 
-import { ArrowLeft, Maximize2, Bell, Globe, ChevronDown, Search } from "lucide-react"
+import { ArrowLeft, Maximize2, Bell, Globe, ChevronDown, Search, Menu } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-export default function Header() {
+export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const router = useRouter()
   const [lang, setLang] = useState("FR")
 
@@ -12,12 +12,19 @@ export default function Header() {
     <header className="ne-header">
       {/* Left — Logo + Nav */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <button
+          className="ne-header-btn ne-menu-toggle"
+          onClick={onMenuClick}
+          title="Menu"
+        >
+          <Menu size={18} />
+        </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div className="ne-logo-mark">N</div>
           <span className="ne-logo-text">
             NOOR<span> EAT</span>
           </span>
-          <span style={{
+          <span className="ne-header-badge" style={{
             background: 'rgba(6,193,103,0.15)',
             color: 'var(--ne-accent)',
             fontSize: '10px',
@@ -29,7 +36,7 @@ export default function Header() {
           }}>ADMIN</span>
         </div>
 
-        <div style={{ display: 'flex', gap: '4px' }}>
+        <div className="ne-header-nav-extra" style={{ display: 'flex', gap: '4px' }}>
           <button
             onClick={() => router.back()}
             className="ne-header-btn"
@@ -44,7 +51,7 @@ export default function Header() {
       </div>
 
       {/* Center — Search */}
-      <div style={{
+      <div className="ne-header-search" style={{
         flex: 1,
         maxWidth: '400px',
         margin: '0 24px',
@@ -90,6 +97,7 @@ export default function Header() {
         </button>
 
         <button
+          className="ne-header-lang"
           onClick={() => setLang(lang === "FR" ? "EN" : "FR")}
           style={{
             display: 'flex',

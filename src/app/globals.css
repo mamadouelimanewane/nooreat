@@ -250,6 +250,87 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--ne-bg-primary);
 }
 
+/* ─────────── Responsive sidebar (collapsible below 1180px) ─────────── */
+.ne-menu-toggle {
+  display: none;
+}
+
+.ne-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .ne-menu-toggle {
+    display: flex !important;
+  }
+
+  .ne-sidebar {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    z-index: 45;
+    box-shadow: var(--ne-shadow-lg);
+  }
+
+  .ne-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .ne-sidebar-backdrop.open {
+    display: block;
+    position: fixed;
+    inset: 60px 0 0 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 44;
+  }
+
+  .ne-main {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .ne-header-search {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .ne-header {
+    padding: 0 12px;
+  }
+
+  .ne-header-nav-extra,
+  .ne-header-badge {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ne-header-lang {
+    display: none !important;
+  }
+}
+
+/* ─────────── Client store page: content + sticky cart ─────────── */
+.ne-store-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+.ne-store-layout > * {
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .ne-store-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ─────────── Cards ─────────── */
 .ne-card {
   background: var(--ne-bg-card);

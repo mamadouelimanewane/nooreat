@@ -36,6 +36,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Landing page publique et portails client/livreur : auth gérée côté client
+  // via token Bearer (même mécanisme que les apps mobiles), pas de session NextAuth.
+  if (pathname === "/" || pathname.startsWith("/client") || pathname.startsWith("/livreur")) {
+    return NextResponse.next()
+  }
+
   // Toutes les autres routes matchées ici sont le back-office admin :
   // exiger une session NextAuth valide, sinon rediriger vers /login.
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })

@@ -230,9 +230,9 @@ function NavLink({ item, depth = 0 }: { item: NavItem; depth?: number }) {
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ open }: { open?: boolean }) {
   return (
-    <aside className="ne-sidebar">
+    <aside className={`ne-sidebar ${open ? "open" : ""}`}>
       <nav className="ne-sidebar-nav">
         {navigation.map((group) => (
           <div key={group.section} style={{ marginBottom: '4px' }}>
