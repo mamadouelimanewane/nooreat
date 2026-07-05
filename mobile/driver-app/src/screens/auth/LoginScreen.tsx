@@ -53,7 +53,7 @@ export default function LoginScreen({ navigation }: Props) {
         <View style={styles.logoCircle}>
           <Text style={styles.logoIcon}>🚗</Text>
         </View>
-        <Text style={styles.title}>NDUGUMi Driver</Text>
+        <Text style={styles.title}>NOOR EAT Driver</Text>
         <Text style={styles.subtitle}>Connectez-vous à votre compte livreur</Text>
       </View>
 

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { ShoppingCart, Wallet, ClipboardList, LogOut, User } from "lucide-react"
+import { ShoppingBag, ClipboardList, LogOut, User } from "lucide-react"
 import { getClientSession, clearClientSession, type ClientUser } from "@/lib/clientSession"
 import { getCart, cartCount } from "@/lib/clientCart"
 
@@ -38,49 +38,42 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ne-bg-primary)" }}>
-      <header className="ne-header" style={{ position: "sticky" }}>
-        <Link href="/client" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-          <div className="ne-logo-mark">N</div>
-          <span className="ne-logo-text">NOOR<span> EAT</span></span>
-        </Link>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Link href="/client/orders" className="ne-header-btn" title="Mes commandes">
-            <ClipboardList size={17} />
-          </Link>
-          <Link href="/client/wallet" className="ne-header-btn" title="Portefeuille">
-            <Wallet size={17} />
-          </Link>
-          <Link href="/client/cart" className="ne-header-btn" title="Panier" style={{ position: "relative" }}>
-            <ShoppingCart size={17} />
-            {count > 0 && (
-              <span style={{
-                position: "absolute", top: "2px", right: "2px", background: "var(--ne-accent)",
-                color: "#000", fontSize: "10px", fontWeight: 800, borderRadius: "999px",
-                minWidth: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center",
-                padding: "0 3px",
-              }}>{count}</span>
-            )}
+    <div className="noor-client-scope min-h-screen">
+      <header className="sticky top-0 z-40 bg-[#fff] border-b border-neutral-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <Link href="/client" className="flex items-center gap-2 shrink-0">
+            <span className="w-8 h-8 rounded-full bg-[#06C167] flex items-center justify-center text-black font-black text-sm">N</span>
+            <span className="font-black text-lg tracking-tight hidden sm:inline">NOOR EAT</span>
           </Link>
 
-          {user ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "8px" }}>
-              <span style={{
-                fontSize: "12px", color: "var(--ne-text-secondary)", display: "flex",
-                alignItems: "center", gap: "6px",
-              }}>
-                <User size={14} /> {user.name.split(" ")[0]}
-              </span>
-              <button onClick={handleLogout} className="ne-header-btn" title="Déconnexion">
-                <LogOut size={16} />
-              </button>
-            </div>
-          ) : (
-            <Link href="/client/login" className="ne-btn-primary" style={{ marginLeft: "8px", padding: "8px 16px", fontSize: "13px" }}>
-              Se connecter
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Link href="/client/orders" className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition" title="Mes commandes">
+              <ClipboardList size={19} />
             </Link>
-          )}
+            <Link href="/client/cart" className="relative w-10 h-10 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition" title="Panier">
+              <ShoppingBag size={19} />
+              {count > 0 && (
+                <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center">
+                  {count}
+                </span>
+              )}
+            </Link>
+
+            {user ? (
+              <div className="flex items-center gap-2 ml-1">
+                <Link href="/client/wallet" className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-100 px-3 py-2 rounded-full transition">
+                  <User size={14} /> {user.name.split(" ")[0]}
+                </Link>
+                <button onClick={handleLogout} className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition" title="Déconnexion">
+                  <LogOut size={17} />
+                </button>
+              </div>
+            ) : (
+              <Link href="/client/login" className="ml-1 bg-black text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-neutral-800 transition">
+                Se connecter
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 

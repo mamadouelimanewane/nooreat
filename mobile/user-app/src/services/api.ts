@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://ndugumi.vercel.app/api"
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://nooreat.vercel.app/api"
 
 export const api = axios.create({
   baseURL: BASE_URL,

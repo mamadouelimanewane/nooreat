@@ -13,15 +13,15 @@ export default function ReferralScreen({ navigation }: any) {
   const [code, setCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const API_URL = process.env.EXPO_PUBLIC_API_URL || "https://ndugumi.vercel.app/api"
-  
+  const API_URL = process.env.EXPO_PUBLIC_API_URL || "https://nooreat.vercel.app/api"
+
   // Create a simple custom referral code using ID
-  const myReferralCode = user?.referralCode || `NDG-${user?.id?.substring(0,6).toUpperCase()}`
+  const myReferralCode = user?.referralCode || `NE-${user?.id?.substring(0,6).toUpperCase()}`
 
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Rejoins NDUGUMi pour tes courses ! Utilise mon code de parrainage ${myReferralCode} pour gagner 500 FCFA sur ton premier chargement.`,
+        message: `Rejoins NOOR EAT pour tes commandes ! Utilise mon code de parrainage ${myReferralCode} pour gagner 500 FCFA sur ton premier chargement.`,
       })
     } catch (error) {
       console.log("Share err:", error)

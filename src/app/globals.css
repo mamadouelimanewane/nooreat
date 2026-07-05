@@ -1,6 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
   /* NOOR EAT Color System - Uber Eats inspired */
   --ne-bg-primary: #141414;
@@ -314,22 +322,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* ─────────── Client store page: content + sticky cart ─────────── */
-.ne-store-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
-}
-
-.ne-store-layout > * {
-  min-width: 0;
-}
-
-@media (max-width: 860px) {
-  .ne-store-layout {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* ─────────── Cards ─────────── */
 .ne-card {
@@ -631,3 +623,17 @@ aside.w-60 {
   background: var(--ne-bg-secondary) !important;
   border-right-color: var(--ne-border) !important;
 }
+
+/* ─────────── Client portal (UberEats-style light theme) ───────────
+   The rules above are unlayered plain CSS, which in Tailwind v4's cascade
+   always outrank layered utility classes regardless of specificity. The
+   client portal needs its own light theme, so it gets its own unlayered
+   scope + heading resets to escape those forced dark-theme overrides. */
+.noor-client-scope {
+  background: #ffffff;
+  color: #171717;
+  color-scheme: light;
+}
+.noor-client-scope h1 { font-weight: 800; letter-spacing: -0.02em; color: inherit; }
+.noor-client-scope h2 { font-weight: 700; letter-spacing: -0.01em; color: inherit; }
+.noor-client-scope h3 { font-weight: 700; letter-spacing: normal; color: inherit; }

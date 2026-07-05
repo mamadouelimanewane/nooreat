@@ -18,7 +18,7 @@ const MENU_ITEMS = [
   { icon: "🔔", label: "Notifications", screen: null },
   { icon: "🔒", label: "Changer le mot de passe", screen: null },
   { icon: "⭐", label: "Mes avis clients", screen: null },
-  { icon: "📞", label: "Support NDUGUMi", screen: null },
+  { icon: "📞", label: "Support NOOR EAT", screen: null },
   { icon: "📋", label: "Conditions générales", screen: null },
 ]
 
@@ -111,7 +111,7 @@ export default function ProfileScreen({ navigation }: any) {
         <Text style={styles.logoutText}>🚪 Se déconnecter</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>NDUGUMi Driver v1.0.0</Text>
+      <Text style={styles.version}>NOOR EAT Driver v1.0.0</Text>
       <View style={{ height: 100 }} />
     </ScrollView>
   )

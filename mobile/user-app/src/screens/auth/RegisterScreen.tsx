@@ -52,7 +52,7 @@ export default function RegisterScreen({ navigation }: any) {
         </TouchableOpacity>
 
         <Text style={styles.title}>Créer un compte</Text>
-        <Text style={styles.subtitle}>Rejoignez NDUGUMi et commandez vos produits frais</Text>
+        <Text style={styles.subtitle}>Rejoignez NOOR EAT et commandez vos plats préférés</Text>
 
         <View style={styles.form}>
           {[

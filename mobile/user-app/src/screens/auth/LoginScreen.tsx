@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }: any) {
         <View style={styles.header}>
           <View style={styles.logoBox}>
             <Text style={styles.logoIcon}>🌿</Text>
-            <Text style={styles.logoTextGreen}>NDUGUMi</Text>
+            <Text style={styles.logoTextGreen}>NOOR EAT</Text>
           </View>
           <Text style={styles.title}>Bienvenue !</Text>
           <Text style={styles.subtitle}>Connectez-vous pour commander</Text>

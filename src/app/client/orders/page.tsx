@@ -15,10 +15,10 @@ type Order = {
 }
 
 const STATUS_BADGE: Record<string, string> = {
-  Pending: "ne-badge-warning",
-  Processing: "ne-badge-info",
-  Completed: "ne-badge-success",
-  Cancelled: "ne-badge-danger",
+  Pending: "bg-amber-50 text-amber-700",
+  Processing: "bg-sky-50 text-sky-700",
+  Completed: "bg-emerald-50 text-emerald-700",
+  Cancelled: "bg-red-50 text-red-700",
 }
 const STATUS_LABEL: Record<string, string> = {
   Pending: "En attente",
@@ -42,33 +42,33 @@ export default function ClientOrdersPage() {
   }, [router])
 
   return (
-    <div style={{ maxWidth: "700px", margin: "0 auto", padding: "28px 24px" }}>
-      <h1 style={{ fontSize: "22px", marginBottom: "20px" }}>Mes commandes</h1>
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <h1 className="text-xl font-extrabold mb-5">Mes commandes</h1>
 
       {orders === null && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {[...Array(3)].map((_, i) => <div key={i} className="ne-skeleton" style={{ height: "70px" }} />)}
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => <div key={i} className="h-20 rounded-2xl bg-neutral-100 animate-pulse" />)}
         </div>
       )}
 
       {orders?.length === 0 && (
-        <p style={{ color: "var(--ne-text-muted)", textAlign: "center", padding: "48px 0" }}>
-          Vous n&apos;avez pas encore passé de commande.
-        </p>
+        <p className="text-neutral-400 text-center py-16">Vous n&apos;avez pas encore passé de commande.</p>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      <div className="space-y-3">
         {orders?.map((o) => (
-          <Link key={o.id} href={`/client/orders/${o.id}`} className="ne-card" style={{ textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link key={o.id} href={`/client/orders/${o.id}`} className="flex items-center justify-between border border-neutral-200 rounded-2xl p-4 hover:border-neutral-400 transition">
             <div>
-              <div style={{ fontWeight: 600, fontSize: "14.5px" }}>{o.store.name}</div>
-              <div style={{ color: "var(--ne-text-muted)", fontSize: "12px" }}>
+              <div className="font-bold text-[15px]">{o.store.name}</div>
+              <div className="text-neutral-400 text-xs mt-0.5">
                 #{o.orderId} · {new Date(o.createdAt).toLocaleString("fr-FR")}
               </div>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontWeight: 700, color: "var(--ne-accent)", marginBottom: "4px" }}>{o.total.toLocaleString("fr-FR")} FCFA</div>
-              <span className={`ne-badge ${STATUS_BADGE[o.status] ?? "ne-badge-muted"}`}>{STATUS_LABEL[o.status] ?? o.status}</span>
+            <div className="text-right">
+              <div className="font-bold mb-1">{o.total.toLocaleString("fr-FR")} FCFA</div>
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_BADGE[o.status] ?? "bg-neutral-100 text-neutral-600"}`}>
+                {STATUS_LABEL[o.status] ?? o.status}
+              </span>
             </div>
           </Link>
         ))}

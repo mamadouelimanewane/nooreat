@@ -42,7 +42,7 @@ export default function SplashScreen({ navigation }: Props) {
         <View style={styles.logoCircle}>
           <Text style={styles.logoIcon}>🚗</Text>
         </View>
-        <Text style={styles.appName}>NDUGUMi</Text>
+        <Text style={styles.appName}>NOOR EAT</Text>
         <Text style={styles.tagline}>Driver App</Text>
       </Animated.View>
       <Text style={styles.version}>v1.0.0</Text>

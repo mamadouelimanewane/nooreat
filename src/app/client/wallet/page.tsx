@@ -46,59 +46,65 @@ export default function ClientWalletPage() {
   }
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "28px 24px" }}>
-      <h1 style={{ fontSize: "22px", marginBottom: "20px" }}>Portefeuille</h1>
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <h1 className="text-xl font-extrabold mb-5">Portefeuille</h1>
 
-      <div className="ne-card" style={{ marginBottom: "20px", textAlign: "center", padding: "28px" }}>
-        <Wallet size={28} style={{ color: "var(--ne-accent)", margin: "0 auto 10px" }} />
-        <div style={{ fontSize: "13px", color: "var(--ne-text-secondary)", marginBottom: "4px" }}>Solde disponible</div>
-        <div style={{ fontSize: "32px", fontWeight: 900 }}>
+      <div className="border border-neutral-200 rounded-2xl p-7 text-center mb-5">
+        <Wallet size={26} className="text-[#06C167] mx-auto mb-2.5" />
+        <div className="text-neutral-500 text-sm mb-1">Solde disponible</div>
+        <div className="text-3xl font-black">
           {balance === null ? "…" : `${balance.toLocaleString("fr-FR")} FCFA`}
         </div>
       </div>
 
-      <div className="ne-card" style={{ marginBottom: "24px" }}>
-        <div className="ne-section-header"><span className="ne-section-title">Recharger</span></div>
-        <div style={{ display: "flex", gap: "10px", marginBottom: "12px", flexWrap: "wrap" }}>
+      <div className="border border-neutral-200 rounded-2xl p-5 mb-6">
+        <h2 className="font-bold text-sm mb-3">Recharger</h2>
+        <div className="flex gap-2 flex-wrap mb-4">
           {[1000, 2000, 5000, 10000].map((v) => (
             <button
               key={v}
               onClick={() => setAmount(v)}
-              className={amount === v ? "ne-btn-primary" : "ne-btn-ghost"}
-              style={{ fontSize: "13px", padding: "8px 14px" }}
+              className={`text-sm font-semibold px-3.5 py-2 rounded-full transition ${
+                amount === v ? "bg-black text-white" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+              }`}
             >
               {v.toLocaleString("fr-FR")}
             </button>
           ))}
         </div>
-        <label className="ne-label">Mode de paiement</label>
-        <div style={{ display: "flex", gap: "10px", marginBottom: "16px", flexWrap: "wrap" }}>
+        <label className="block text-xs font-bold uppercase tracking-wide text-neutral-500 mb-2">Mode de paiement</label>
+        <div className="flex gap-2 flex-wrap mb-5">
           {["Wave", "Orange Money", "Cash"].map((m) => (
             <button
               key={m}
               onClick={() => setMethod(m)}
-              className={method === m ? "ne-btn-primary" : "ne-btn-ghost"}
-              style={{ fontSize: "13px", padding: "8px 14px" }}
+              className={`text-sm font-semibold px-3.5 py-2 rounded-full transition ${
+                method === m ? "bg-black text-white" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+              }`}
             >
               {m}
             </button>
           ))}
         </div>
-        <button onClick={handleTopup} disabled={loading} className="ne-btn-primary" style={{ width: "100%", justifyContent: "center" }}>
+        <button
+          onClick={handleTopup}
+          disabled={loading}
+          className="w-full bg-black text-white rounded-full py-3.5 font-semibold flex items-center justify-center gap-2 hover:bg-neutral-800 transition disabled:opacity-50"
+        >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <><Plus size={16} /> Recharger {amount.toLocaleString("fr-FR")} FCFA</>}
         </button>
       </div>
 
-      <div className="ne-section-header"><span className="ne-section-title">Historique</span></div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {history.length === 0 && <p style={{ color: "var(--ne-text-muted)", fontSize: "13px" }}>Aucune transaction.</p>}
+      <h2 className="font-bold text-sm mb-3">Historique</h2>
+      <div className="space-y-2.5">
+        {history.length === 0 && <p className="text-neutral-400 text-sm">Aucune transaction.</p>}
         {history.map((t) => (
-          <div key={t.id} className="ne-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div key={t.id} className="flex justify-between items-center border border-neutral-200 rounded-2xl p-4">
             <div>
-              <div style={{ fontSize: "13.5px", fontWeight: 500 }}>{t.description || t.type}</div>
-              <div style={{ color: "var(--ne-text-muted)", fontSize: "12px" }}>{new Date(t.createdAt).toLocaleString("fr-FR")}</div>
+              <div className="text-sm font-medium">{t.description || t.type}</div>
+              <div className="text-neutral-400 text-xs">{new Date(t.createdAt).toLocaleString("fr-FR")}</div>
             </div>
-            <div style={{ fontWeight: 700, color: t.type === "Credit" ? "var(--ne-accent)" : "var(--ne-danger)" }}>
+            <div className={`font-bold ${t.type === "Credit" ? "text-[#06C167]" : "text-red-500"}`}>
               {t.type === "Credit" ? "+" : "-"}{t.amount.toLocaleString("fr-FR")} FCFA
             </div>
           </div>

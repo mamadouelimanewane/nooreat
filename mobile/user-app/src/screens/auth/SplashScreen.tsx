@@ -23,11 +23,11 @@ export default function SplashScreen({ navigation }: any) {
       <Animated.View style={[styles.logoContainer, { transform: [{ scale: scaleAnim }], opacity: opacityAnim }]}>
         <View style={styles.logoBox}>
           <Text style={styles.logoIcon}>🌿</Text>
-          <Text style={styles.logoText}>NDUGUMi</Text>
+          <Text style={styles.logoText}>NOOR EAT</Text>
         </View>
-        <Text style={styles.tagline}>Produits Frais du Sénégal</Text>
+        <Text style={styles.tagline}>Vos restaurants préférés à Dakar</Text>
       </Animated.View>
-      <Text style={styles.footer}>© 2026 NDUGUMi. Tous droits réservés.</Text>
+      <Text style={styles.footer}>© 2026 NOOR EAT. Tous droits réservés.</Text>
     </View>
   )
 }

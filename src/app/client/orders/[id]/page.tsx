@@ -46,32 +46,29 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       })
   }, [id, router])
 
-  if (error) return <div style={{ textAlign: "center", padding: "60px" }}>{error}</div>
-  if (!order) return <div style={{ maxWidth: "600px", margin: "0 auto", padding: "28px 24px" }}><div className="ne-skeleton" style={{ height: "200px" }} /></div>
+  if (error) return <div className="text-center py-16 text-neutral-500">{error}</div>
+  if (!order) return <div className="max-w-lg mx-auto px-4 py-6"><div className="h-52 rounded-2xl bg-neutral-100 animate-pulse" /></div>
 
   const stepIndex = order.status === "Cancelled" ? -1 : STEPS.findIndex((s) => s.key === order.status)
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "28px 24px" }}>
-      <h1 style={{ fontSize: "20px", marginBottom: "4px" }}>{order.storeName}</h1>
-      <p style={{ color: "var(--ne-text-muted)", fontSize: "13px", marginBottom: "20px" }}>
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <h1 className="text-lg font-extrabold mb-0.5">{order.storeName}</h1>
+      <p className="text-neutral-400 text-xs mb-5">
         #{order.orderId} · {new Date(order.createdAt).toLocaleString("fr-FR")}
       </p>
 
       {order.status === "Cancelled" ? (
-        <div className="ne-badge ne-badge-danger" style={{ marginBottom: "20px" }}>Commande annulée</div>
+        <div className="inline-block bg-red-50 text-red-600 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">Commande annulée</div>
       ) : (
-        <div className="ne-card" style={{ marginBottom: "20px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="border border-neutral-200 rounded-2xl p-5 mb-5">
+          <div className="flex justify-between">
             {STEPS.map((s, i) => (
-              <div key={s.key} style={{ flex: 1, textAlign: "center", opacity: i <= stepIndex ? 1 : 0.35 }}>
-                <div style={{
-                  width: "24px", height: "24px", borderRadius: "50%", margin: "0 auto 6px",
-                  background: i <= stepIndex ? "var(--ne-accent)" : "var(--ne-bg-input)",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700,
-                  color: i <= stepIndex ? "#000" : "var(--ne-text-muted)",
-                }}>{i + 1}</div>
-                <div style={{ fontSize: "11px", color: "var(--ne-text-secondary)" }}>{s.label}</div>
+              <div key={s.key} className="flex-1 text-center" style={{ opacity: i <= stepIndex ? 1 : 0.35 }}>
+                <div className={`w-6 h-6 rounded-full mx-auto mb-1.5 flex items-center justify-center text-[11px] font-bold ${i <= stepIndex ? "bg-[#06C167] text-black" : "bg-neutral-100 text-neutral-400"}`}>
+                  {i + 1}
+                </div>
+                <div className="text-[11px] text-neutral-500">{s.label}</div>
               </div>
             ))}
           </div>
@@ -79,46 +76,48 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       )}
 
       {order.deliveryPin && order.status !== "Completed" && order.status !== "Cancelled" && (
-        <div className="ne-card ne-card-accent" style={{ marginBottom: "16px", display: "flex", alignItems: "center", gap: "10px" }}>
-          <KeyRound size={18} style={{ color: "var(--ne-accent)" }} />
-          <span style={{ fontSize: "13.5px" }}>Code de remise au livreur : <strong>{order.deliveryPin}</strong></span>
+        <div className="border border-[#06C167]/30 bg-[#06C167]/5 rounded-2xl p-4 mb-4 flex items-center gap-2.5">
+          <KeyRound size={18} className="text-[#06C167]" />
+          <span className="text-sm">Code de remise au livreur : <strong>{order.deliveryPin}</strong></span>
         </div>
       )}
 
       {order.driver && (
-        <div className="ne-card" style={{ marginBottom: "16px", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div className="ne-avatar">{order.driver.name.charAt(0)}</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, fontSize: "14px" }}>{order.driver.name}</div>
-            <div style={{ display: "flex", gap: "12px", fontSize: "12px", color: "var(--ne-text-secondary)" }}>
-              {order.driver.vehicle && <span style={{ display: "flex", alignItems: "center", gap: "4px" }}><Car size={12} />{order.driver.vehicle}</span>}
-              <span style={{ display: "flex", alignItems: "center", gap: "4px" }}><Star size={12} />{order.driver.rating.toFixed(1)}</span>
+        <div className="border border-neutral-200 rounded-2xl p-4 mb-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold shrink-0">
+            {order.driver.name.charAt(0)}
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-sm">{order.driver.name}</div>
+            <div className="flex gap-3 text-xs text-neutral-500">
+              {order.driver.vehicle && <span className="flex items-center gap-1"><Car size={12} />{order.driver.vehicle}</span>}
+              <span className="flex items-center gap-1"><Star size={12} />{order.driver.rating.toFixed(1)}</span>
             </div>
           </div>
           {order.driver.phone && (
-            <a href={`tel:${order.driver.phone}`} className="ne-header-btn"><Phone size={16} /></a>
+            <a href={`tel:${order.driver.phone}`} className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition"><Phone size={16} /></a>
           )}
         </div>
       )}
 
-      <div className="ne-card" style={{ marginBottom: "16px" }}>
-        <div className="ne-section-header"><span className="ne-section-title">Articles</span></div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div className="border border-neutral-200 rounded-2xl p-5 mb-4">
+        <h2 className="font-bold text-sm mb-3">Articles</h2>
+        <div className="space-y-2">
           {order.items.map((i) => (
-            <div key={i.productId} style={{ display: "flex", justifyContent: "space-between", fontSize: "13.5px" }}>
+            <div key={i.productId} className="flex justify-between text-sm">
               <span>{i.quantity}× {i.name}</span>
-              <span>{(i.price * i.quantity).toLocaleString("fr-FR")} FCFA</span>
+              <span className="font-medium">{(i.price * i.quantity).toLocaleString("fr-FR")} FCFA</span>
             </div>
           ))}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, marginTop: "12px", borderTop: "1px solid var(--ne-border)", paddingTop: "12px" }}>
+        <div className="flex justify-between font-bold mt-3 pt-3 border-t border-neutral-100">
           <span>Total</span>
-          <span style={{ color: "var(--ne-accent)" }}>{order.total.toLocaleString("fr-FR")} FCFA</span>
+          <span>{order.total.toLocaleString("fr-FR")} FCFA</span>
         </div>
       </div>
 
       {order.address && (
-        <p style={{ color: "var(--ne-text-muted)", fontSize: "12.5px" }}>Livraison : {order.address}</p>
+        <p className="text-neutral-400 text-xs">Livraison : {order.address}</p>
       )}
     </div>
   )

@@ -63,6 +63,7 @@ model Store {
   status              String    @default("Active")
   serviceArea         String?
   segment             String    @default("RESTAURANT")
+  cuisine             String?
   totalOrders         Int       @default(0)
   description         String?
   minOrder            Float?

@@ -1,4 +1,4 @@
-# NDUGUMi Mobile Apps — Build Guide
+# NOOR EAT Mobile Apps — Build Guide
 
 ## État des apps (mis à jour)
 
@@ -33,7 +33,7 @@
 
 ```
 EXPO_PUBLIC_ONESIGNAL_APP_ID=votre-app-id   ← OneSignal App ID
-API_URL=https://api.ndugumi.com/api          ← URL de l'API backend
+EXPO_PUBLIC_API_URL=https://nooreat.vercel.app/api   ← URL de l'API backend
 ```
 
 ## Étape obligatoire avant le premier build : projectId EAS
@@ -54,6 +54,10 @@ API_URL=https://api.ndugumi.com/api          ← URL de l'API backend
 |-----|------|---------------------|-----------------|
 | User App | `mobile/user-app/` | `com.ndugumi.userapp` | `com.ndugumi.userapp` |
 | Driver App | `mobile/driver-app/` | `com.ndugumi.driverapp` | `com.ndugumi.driverapp` |
+
+> Ces identifiants techniques conservent volontairement le nom historique "ndugumi" : ils sont liés aux
+> .apk déjà publiés et à l'app EAS existante. Les changer romprait la continuité de mise à jour des
+> apps déjà installées. Seul le nom affiché (branding visible) a été renommé en NOOR EAT.
 
 ---
 
@@ -166,8 +170,8 @@ Update the `API_URL` in `eas.json` for each environment:
 | Environment | URL |
 |-------------|-----|
 | Development | `http://192.168.1.3:3001/api` |
-| Preview | `https://api-staging.ndugumi.com/api` |
-| Production | `https://api.ndugumi.com/api` |
+| Preview | `https://nooreat.vercel.app/api` |
+| Production | `https://nooreat.vercel.app/api` |
 
 ---
 

@@ -2,12 +2,15 @@
 
 import { use, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Minus, ShoppingCart } from "lucide-react"
-import { getCart, setItemQuantity, cartTotal, type Cart } from "@/lib/clientCart"
+import { Plus, Minus, Star, Clock, Bike, ShoppingBag } from "lucide-react"
+import { getCart, setItemQuantity, cartTotal, cartCount, type Cart } from "@/lib/clientCart"
 import { CART_EVENT } from "../../layout"
 
 type Product = { id: string; name: string; price: number; description: string | null; image: string; category: string | null }
-type Store = { id: string; name: string; location: string | null; rating: number; deliveryTime: string; minOrder: number; emoji: string }
+type Store = {
+  id: string; name: string; location: string | null; rating: number; deliveryTime: string
+  minOrder: number; emoji: string; cuisine: string; description: string | null; deliveryFee: number
+}
 
 export default function StorePage({ params }: { params: Promise<{ id: string }> }) {
   const { id: storeId } = use(params)
@@ -45,59 +48,89 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
   const categories = [...new Set(products.map((p) => p.category || "Autres"))]
 
   if (loading) {
-    return <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "28px 24px" }}>
-      <div className="ne-skeleton" style={{ height: "80px", marginBottom: "20px" }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "16px" }}>
-        {[...Array(4)].map((_, i) => <div key={i} className="ne-skeleton" style={{ height: "100px" }} />)}
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="h-44 rounded-2xl bg-neutral-100 animate-pulse mb-6" />
+        <div className="space-y-3">
+          {[...Array(4)].map((_, i) => <div key={i} className="h-20 rounded-xl bg-neutral-100 animate-pulse" />)}
+        </div>
       </div>
-    </div>
+    )
   }
 
   if (!store) {
-    return <div style={{ textAlign: "center", padding: "60px" }}>Restaurant introuvable.</div>
+    return <div className="text-center py-16 text-neutral-500">Restaurant introuvable.</div>
   }
 
+  const count = cartCount(cartForThisStore)
+
   return (
-    <div className="ne-store-layout" style={{ maxWidth: "1100px", margin: "0 auto", padding: "28px 24px" }}>
-      <div>
-        <div className="ne-card" style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "16px" }}>
-          <div style={{ fontSize: "44px" }}>{store.emoji}</div>
-          <div>
-            <h1 style={{ fontSize: "20px" }}>{store.name}</h1>
-            <p style={{ color: "var(--ne-text-secondary)", fontSize: "13px" }}>
-              {store.location} · ★ {store.rating.toFixed(1)} · {store.deliveryTime}
-            </p>
+    <div className="pb-28">
+      {/* Hero banner */}
+      <div className="bg-gradient-to-br from-neutral-100 to-neutral-50 h-40 sm:h-52 flex items-center justify-center">
+        <span className="text-7xl sm:text-8xl">{store.emoji}</span>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4">
+        {/* Info card */}
+        <div className="bg-[#fff] rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] -mt-8 relative p-5 mb-6">
+          <h1 className="text-xl font-extrabold mb-1">{store.name}</h1>
+          {store.description && <p className="text-neutral-500 text-sm mb-3">{store.description}</p>}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-700">
+            <span className="flex items-center gap-1 font-semibold"><Star size={14} className="fill-black" /> {store.rating.toFixed(1)}</span>
+            <span className="flex items-center gap-1"><Clock size={14} /> {store.deliveryTime}</span>
+            <span className="flex items-center gap-1"><Bike size={14} /> {store.deliveryFee.toLocaleString("fr-FR")} FCFA</span>
+            <span className="text-neutral-400">{store.cuisine}</span>
           </div>
         </div>
 
+        {/* Category tabs */}
+        {categories.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-6 sticky top-16 bg-[#fff] z-10 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
+            {categories.map((cat) => (
+              <a
+                key={cat}
+                href={`#cat-${cat}`}
+                className="shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition"
+              >
+                {cat}
+              </a>
+            ))}
+          </div>
+        )}
+
         {categories.map((cat) => (
-          <div key={cat} style={{ marginBottom: "24px" }}>
-            <div className="ne-section-header">
-              <span className="ne-section-dot" />
-              <span className="ne-section-title">{cat}</span>
-            </div>
-            <div style={{ display: "grid", gap: "12px" }}>
+          <div key={cat} id={`cat-${cat}`} className="mb-8 scroll-mt-32">
+            <h2 className="font-bold text-lg mb-3">{cat}</h2>
+            <div className="divide-y divide-neutral-100">
               {products.filter((p) => (p.category || "Autres") === cat).map((p) => {
                 const qty = quantities.get(p.id) ?? 0
                 return (
-                  <div key={p.id} className="ne-card" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                    <div style={{ fontSize: "28px" }}>{p.image}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: "14.5px" }}>{p.name}</div>
-                      {p.description && <div style={{ color: "var(--ne-text-muted)", fontSize: "12.5px" }}>{p.description}</div>}
-                      <div style={{ color: "var(--ne-accent)", fontWeight: 700, fontSize: "13.5px", marginTop: "4px" }}>
-                        {p.price.toLocaleString("fr-FR")} FCFA
-                      </div>
+                  <div key={p.id} className="flex items-center gap-4 py-4">
+                    <div className="w-16 h-16 rounded-xl bg-neutral-50 flex items-center justify-center text-3xl shrink-0">
+                      {p.image}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-[15px] truncate">{p.name}</div>
+                      {p.description && <div className="text-neutral-500 text-[13px] truncate">{p.description}</div>}
+                      <div className="font-bold text-[14px] mt-1">{p.price.toLocaleString("fr-FR")} FCFA</div>
                     </div>
                     {qty === 0 ? (
-                      <button onClick={() => updateQty(p, 1)} className="ne-btn-primary" style={{ padding: "8px 14px", fontSize: "13px" }}>
-                        Ajouter
+                      <button
+                        onClick={() => updateQty(p, 1)}
+                        className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-700 hover:border-black hover:text-black transition shrink-0"
+                      >
+                        <Plus size={16} />
                       </button>
                     ) : (
-                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <button onClick={() => updateQty(p, qty - 1)} className="ne-header-btn"><Minus size={14} /></button>
-                        <span style={{ fontWeight: 700, minWidth: "18px", textAlign: "center" }}>{qty}</span>
-                        <button onClick={() => updateQty(p, qty + 1)} className="ne-header-btn"><Plus size={14} /></button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button onClick={() => updateQty(p, qty - 1)} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition">
+                          <Minus size={14} />
+                        </button>
+                        <span className="font-bold w-4 text-center">{qty}</span>
+                        <button onClick={() => updateQty(p, qty + 1)} className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-neutral-800 transition">
+                          <Plus size={14} />
+                        </button>
                       </div>
                     )}
                   </div>
@@ -108,36 +141,21 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
         ))}
       </div>
 
-      {/* Sticky cart summary */}
-      <div style={{ position: "sticky", top: "80px", height: "fit-content" }}>
-        <div className="ne-card">
-          <div className="ne-section-header">
-            <ShoppingCart size={16} style={{ color: "var(--ne-accent)" }} />
-            <span className="ne-section-title">Votre panier</span>
-          </div>
-          {!cartForThisStore || cartForThisStore.items.length === 0 ? (
-            <p style={{ color: "var(--ne-text-muted)", fontSize: "13px" }}>Panier vide.</p>
-          ) : (
-            <>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
-                {cartForThisStore.items.map((i) => (
-                  <div key={i.productId} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-                    <span>{i.quantity}× {i.name}</span>
-                    <span>{(i.price * i.quantity).toLocaleString("fr-FR")} FCFA</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, marginBottom: "16px", borderTop: "1px solid var(--ne-border)", paddingTop: "12px" }}>
-                <span>Total</span>
-                <span style={{ color: "var(--ne-accent)" }}>{cartTotal(cartForThisStore).toLocaleString("fr-FR")} FCFA</span>
-              </div>
-              <button onClick={() => router.push("/client/cart")} className="ne-btn-primary" style={{ width: "100%", justifyContent: "center" }}>
-                Commander
-              </button>
-            </>
-          )}
+      {/* Floating cart bar */}
+      {cartForThisStore && count > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
+          <button
+            onClick={() => router.push("/client/cart")}
+            className="max-w-3xl mx-auto w-full bg-black text-white rounded-full py-4 px-6 flex items-center justify-between font-semibold shadow-lg hover:bg-neutral-800 transition"
+          >
+            <span className="flex items-center gap-2">
+              <ShoppingBag size={18} />
+              Voir le panier · {count} article{count > 1 ? "s" : ""}
+            </span>
+            <span>{cartTotal(cartForThisStore).toLocaleString("fr-FR")} FCFA</span>
+          </button>
         </div>
-      </div>
+      )}
     </div>
   )
 }

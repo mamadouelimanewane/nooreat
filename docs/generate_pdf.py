@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Génération du document PDF — NDUGUMi : Documentation Technique & Fonctionnelle
+Génération du document PDF — NOOR EAT : Documentation Technique & Fonctionnelle
 """
 
 from reportlab.lib.pagesizes import A4
@@ -20,7 +20,7 @@ import os
 import math
 
 # ── Couleurs ──
-PRIMARY     = HexColor("#6B6BD5")  # Violet NDUGUMi
+PRIMARY     = HexColor("#6B6BD5")  # Violet NOOR EAT
 PRIMARY_DK  = HexColor("#4F4FB0")
 SECONDARY   = HexColor("#2d3a4a")  # Bleu foncé
 ACCENT      = HexColor("#22c55e")  # Vert
@@ -203,7 +203,7 @@ def header_footer(canvas_obj, doc):
     canvas_obj.line(20*mm, H - 12*mm, W - 20*mm, H - 12*mm)
     canvas_obj.setFont("Helvetica", 7)
     canvas_obj.setFillColor(TEXT_LIGHT)
-    canvas_obj.drawString(20*mm, H - 11*mm, "NDUGUMi — Documentation Technique & Fonctionnelle")
+    canvas_obj.drawString(20*mm, H - 11*mm, "NOOR EAT — Documentation Technique & Fonctionnelle")
     canvas_obj.drawRightString(W - 20*mm, H - 11*mm, "v1.0 — Mars 2026")
     # Footer
     canvas_obj.setStrokeColor(BORDER)
@@ -214,7 +214,7 @@ def header_footer(canvas_obj, doc):
     canvas_obj.drawCentredString(W/2, 9*mm, f"Page {doc.page}")
     canvas_obj.setFillColor(TEXT_LIGHT)
     canvas_obj.drawString(20*mm, 9*mm, "Confidentiel")
-    canvas_obj.drawRightString(W - 20*mm, 9*mm, "NDUGUMi Platform")
+    canvas_obj.drawRightString(W - 20*mm, 9*mm, "NOOR EAT Platform")
     canvas_obj.restoreState()
 
 
@@ -241,7 +241,7 @@ def cover_page(canvas_obj, doc):
     # Logo area
     canvas_obj.setFillColor(white)
     canvas_obj.setFont("Helvetica-Bold", 52)
-    canvas_obj.drawCentredString(W/2, H - 200, "NDUGUMi")
+    canvas_obj.drawCentredString(W/2, H - 200, "NOOR EAT")
 
     # Leaf icon
     canvas_obj.setFont("Helvetica", 40)
@@ -271,7 +271,7 @@ def cover_page(canvas_obj, doc):
     canvas_obj.setFont("Helvetica", 9)
     canvas_obj.setFillColor(HexColor("#9090c0"))
     canvas_obj.drawCentredString(W/2, 60, "Plateforme de gestion de livraison — Senegal, France, Cote d'Ivoire")
-    canvas_obj.drawCentredString(W/2, 45, "github.com/mamadouelimanewane/ndugumi")
+    canvas_obj.drawCentredString(W/2, 45, "github.com/mamadouelimanewane/nooreat")
 
     canvas_obj.restoreState()
 
@@ -322,7 +322,7 @@ def spacer(h=6):
 #           BUILD THE PDF
 # ══════════════════════════════════════════
 
-output_path = os.path.join(os.path.dirname(__file__), "NDUGUMi_Documentation.pdf")
+output_path = os.path.join(os.path.dirname(__file__), "NOOR_EAT_Documentation.pdf")
 
 doc = SimpleDocTemplate(
     output_path,
@@ -392,7 +392,7 @@ story.append(spacer(12))
 
 story.append(Paragraph("Architecture Globale", styles['SubSection']))
 story.append(Paragraph(
-    "NDUGUMi est une plateforme de gestion de livraison construite avec Next.js 16 (App Router). "
+    "NOOR EAT est une plateforme de gestion de livraison construite avec Next.js 16 (App Router). "
     "L'application utilise une architecture monolithique full-stack avec rendu cote serveur (SSR) "
     "et composants React cote client. La base de donnees MongoDB est accedee via Prisma ORM.",
     styles['BodyText2']
@@ -946,7 +946,7 @@ story.append(spacer(8))
 story.append(Paragraph("Structure du Projet", styles['SubSection']))
 story.append(Paragraph(
     "<font face='Courier' size=8>"
-    "ndugumi/<br/>"
+    "nooreat/<br/>"
     "&nbsp;&nbsp;src/<br/>"
     "&nbsp;&nbsp;&nbsp;&nbsp;app/           <font color='#94a3b8'># Routes Next.js (App Router)</font><br/>"
     "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(auth)/      <font color='#94a3b8'># Pages d'authentification</font><br/>"
@@ -1017,8 +1017,8 @@ story.append(HRFlowable(width="100%", thickness=1, color=BORDER))
 story.append(spacer(10))
 story.append(Paragraph(
     "<i>Document genere automatiquement le 31 mars 2026. "
-    "Cette documentation couvre l'ensemble des fonctionnalites de la plateforme NDUGUMi "
-    "telle que deployee sur ndugumi.vercel.app. "
+    "Cette documentation couvre l'ensemble des fonctionnalites de la plateforme NOOR EAT "
+    "telle que deployee sur nooreat.vercel.app. "
     "Pour toute question, contacter l'equipe de developpement.</i>",
     styles['SmallGray']
 ))

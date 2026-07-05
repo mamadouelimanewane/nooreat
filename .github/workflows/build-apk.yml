@@ -1,4 +1,4 @@
-name: Build Android APKs (Ndugumi)
+name: Build Android APKs (NOOR EAT)
 on:
   workflow_dispatch:
   push:
@@ -41,13 +41,13 @@ jobs:
 
       - name: Build APK (Local)
         working-directory: ./mobile/user-app
-        run: npx eas-cli build --platform android --profile preview --local --non-interactive --output=./ndugumi-user.apk
+        run: npx eas-cli build --platform android --profile preview --local --non-interactive --output=./nooreat-user.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ndugumi-user-apk
-          path: ./mobile/user-app/ndugumi-user.apk
+          name: nooreat-user-apk
+          path: ./mobile/user-app/nooreat-user.apk
           retention-days: 7
 
   build_driver_app:
@@ -87,11 +87,11 @@ jobs:
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g"
           NODE_OPTIONS: --max-old-space-size=4096
-        run: npx eas-cli build --platform android --profile preview --local --non-interactive --output=./ndugumi-driver.apk
+        run: npx eas-cli build --platform android --profile preview --local --non-interactive --output=./nooreat-driver.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ndugumi-driver-apk
-          path: ./mobile/driver-app/ndugumi-driver.apk
+          name: nooreat-driver-apk
+          path: ./mobile/driver-app/nooreat-driver.apk
           retention-days: 7

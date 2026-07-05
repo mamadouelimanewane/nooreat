@@ -47,52 +47,47 @@ function ClientLoginForm() {
   }
 
   return (
-    <div className="ne-login-bg">
-      <div style={{ width: "100%", maxWidth: "400px" }}>
-        <div style={{ textAlign: "center", marginBottom: "28px" }}>
-          <div className="ne-logo-mark" style={{ margin: "0 auto 14px", width: "56px", height: "56px", fontSize: "24px" }}>N</div>
-          <h1 style={{ fontSize: "22px" }}>NOOR <span style={{ color: "var(--ne-accent)" }}>EAT</span></h1>
-          <p style={{ color: "var(--ne-text-secondary)", fontSize: "13px" }}>Connexion client</p>
+    <div className="min-h-screen bg-[#fff] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <span className="w-14 h-14 rounded-full bg-[#06C167] flex items-center justify-center text-black font-black text-2xl mx-auto mb-3">N</span>
+          <h1 className="text-xl font-extrabold">NOOR EAT</h1>
+          <p className="text-neutral-500 text-sm mt-1">Connexion client</p>
         </div>
 
-        <div className="ne-login-card">
-          {error && (
-            <div style={{
-              marginBottom: "16px", padding: "10px 14px", background: "rgba(240,62,62,0.12)",
-              border: "1px solid rgba(240,62,62,0.3)", borderRadius: "10px", color: "#f03e3e", fontSize: "13px",
-            }}>{error}</div>
-          )}
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div>
-              <label className="ne-label">E-mail ou téléphone</label>
-              <div style={{ position: "relative" }}>
-                <Mail size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--ne-text-muted)" }} />
-                <input
-                  className="ne-input" style={{ paddingLeft: "36px" }}
-                  value={email} onChange={(e) => setEmail(e.target.value)} required
-                  placeholder="vous@exemple.com"
-                />
-              </div>
+        {error && (
+          <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">{error}</div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-3.5">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wide text-neutral-500 mb-1.5">E-mail ou téléphone</label>
+            <div className="relative">
+              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <input
+                className="w-full bg-neutral-100 rounded-xl pl-10 pr-3 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10"
+                value={email} onChange={(e) => setEmail(e.target.value)} required
+                placeholder="vous@exemple.com"
+              />
             </div>
-            <div>
-              <label className="ne-label">Mot de passe</label>
-              <div style={{ position: "relative" }}>
-                <Lock size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--ne-text-muted)" }} />
-                <input
-                  className="ne-input" style={{ paddingLeft: "36px" }}
-                  type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-                  placeholder="••••••••"
-                />
-              </div>
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wide text-neutral-500 mb-1.5">Mot de passe</label>
+            <div className="relative">
+              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <input
+                className="w-full bg-neutral-100 rounded-xl pl-10 pr-3 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10"
+                type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+                placeholder="••••••••"
+              />
             </div>
-            <button type="submit" disabled={loading} className="ne-btn-primary" style={{ justifyContent: "center", marginTop: "6px" }}>
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <>Se connecter <ArrowRight size={16} /></>}
-            </button>
-          </form>
-        </div>
+          </div>
+          <button type="submit" disabled={loading} className="w-full bg-black text-white rounded-full py-3.5 font-semibold flex items-center justify-center gap-2 hover:bg-neutral-800 transition disabled:opacity-50 mt-2">
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <>Se connecter <ArrowRight size={16} /></>}
+          </button>
+        </form>
 
-        <p style={{ textAlign: "center", color: "var(--ne-text-muted)", fontSize: "13px", marginTop: "20px" }}>
-          Pas encore de compte ? <Link href="/client/register" style={{ color: "var(--ne-accent)" }}>S&apos;inscrire</Link>
+        <p className="text-center text-neutral-500 text-sm mt-6">
+          Pas encore de compte ? <Link href="/client/register" className="text-black font-semibold underline">S&apos;inscrire</Link>
         </p>
       </div>
     </div>
