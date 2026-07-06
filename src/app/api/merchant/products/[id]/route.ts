@@ -23,6 +23,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (body.price !== undefined) data.price = Number(body.price)
   if (typeof body.category === "string") data.category = body.category
   if (typeof body.status === "string") data.status = body.status
+  if (typeof body.photo === "string") data.photo = body.photo || null
 
   const product = await prisma.product.update({ where: { id }, data })
   return NextResponse.json({ product })

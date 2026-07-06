@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const storeId = await getAuthedStoreId()
   if (!storeId) return NextResponse.json({ message: "Non autorisé" }, { status: 401 })
 
-  const { name, description, price, category } = await req.json()
+  const { name, description, price, category, photo } = await req.json()
   if (!name || price === undefined) {
     return NextResponse.json({ message: "Nom et prix requis" }, { status: 400 })
   }
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       description: description || null,
       price: Number(price),
       category: category || null,
+      photo: photo || null,
       storeId,
     },
   })
