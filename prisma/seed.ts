@@ -74,7 +74,7 @@ async function main() {
   const hashedStorePassword = await bcrypt.hash(storeSeedPassword, 10)
   const store = await prisma.store.upsert({
     where: { email: 'store@nooreat.com' },
-    update: { password: hashedStorePassword, name: 'NOOR Market Plateau', cuisine: 'Épicerie', image: 'https://loremflickr.com/480/360/grocerystore/all?lock=216' },
+    update: { password: hashedStorePassword, name: 'NOOR Market Plateau', cuisine: 'Épicerie', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&h=900&fit=crop&q=70&auto=format' },
     create: {
       name: 'NOOR Market Plateau',
       email: 'store@nooreat.com',
@@ -86,7 +86,7 @@ async function main() {
       serviceArea: 'Dakar',
       segment: 'GROCERY',
       cuisine: 'Épicerie',
-      image: 'https://loremflickr.com/480/360/grocerystore/all?lock=216',
+      image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&h=900&fit=crop&q=70&auto=format',
     },
   })
   console.log('✅ Store created:', store.name)
@@ -159,8 +159,8 @@ async function main() {
     products: SeedProduct[]
   }
 
-  function photoUrl(tag: string, lock: number): string {
-    return `https://loremflickr.com/480/360/${tag}/all?lock=${lock}`
+  function photoUrl(photoId: string): string {
+    return `https://images.unsplash.com/photo-${photoId}?w=1200&h=900&fit=crop&q=70&auto=format`
   }
 
   const restaurants: SeedStore[] = [
@@ -170,7 +170,7 @@ async function main() {
       phone: '338211234',
       address: 'Rue Parchappe x Carnot, Plateau, Dakar',
       image: '🍛',
-      photo: photoUrl('senegalfood', 201),
+      photo: photoUrl('1596797038530-2c107229654b'),
       rating: 4.7,
       category: 'Sénégalaise',
       description: 'Institution dakaroise, cuisine sénégalaise et capverdienne généreuse.',
@@ -191,7 +191,7 @@ async function main() {
       phone: '338219876',
       address: 'Rue Vincens, Plateau, Dakar',
       image: '🐟',
-      photo: photoUrl("jollofrice", 202),
+      photo: photoUrl('1604908176997-125f25cc6f3d'),
       rating: 4.6,
       category: 'Sénégalaise',
       description: 'Cuisine traditionnelle sénégalaise au cœur du Plateau.',
@@ -211,7 +211,7 @@ async function main() {
       phone: '338501122',
       address: 'Route de la Corniche, Yoff, Dakar',
       image: '🍚',
-      photo: photoUrl('fishgrill', 203),
+      photo: photoUrl('1519708227418-c8fd9a32b7a2'),
       rating: 4.5,
       category: 'Sénégalaise',
       description: 'Vue sur l\'océan et grands classiques sénégalais.',
@@ -231,7 +231,7 @@ async function main() {
       phone: '338601133',
       address: 'Route des Almadies, Ouakam, Dakar',
       image: '🥘',
-      photo: photoUrl('africancuisine', 204),
+      photo: photoUrl('1512058564366-18510be2db19'),
       rating: 4.4,
       category: 'Sénégalaise',
       description: 'Cadre chaleureux, décor africain, cuisine locale authentique.',
@@ -251,7 +251,7 @@ async function main() {
       phone: '338221144',
       address: 'Route de la Corniche Est, Dakar',
       image: '🦐',
-      photo: photoUrl('seafoodplatter', 205),
+      photo: photoUrl('1565680018434-b513d5e5fd47'),
       rating: 4.6,
       category: 'Fruits de mer',
       description: 'Fruits de mer face à l\'océan, une adresse emblématique de Dakar.',
@@ -271,7 +271,7 @@ async function main() {
       phone: '338601155',
       address: 'Plage de Ngor, Dakar',
       image: '🦞',
-      photo: photoUrl('prawns', 206),
+      photo: photoUrl('1559847844-5315695dadae'),
       rating: 4.3,
       category: 'Fruits de mer',
       description: 'Les pieds dans le sable face à l\'île de Ngor.',
@@ -291,7 +291,7 @@ async function main() {
       phone: '338701166',
       address: 'Sacré-Cœur 3, Dakar',
       image: '🍢',
-      photo: photoUrl('grilledmeat', 207),
+      photo: photoUrl('1544025162-d76694265947'),
       rating: 4.5,
       category: 'Grillades',
       description: 'Viande grillée à la sénégalaise, ambiance conviviale.',
@@ -311,7 +311,7 @@ async function main() {
       phone: '338801177',
       address: 'Mermoz, Dakar',
       image: '🍕',
-      photo: photoUrl('pizza', 208),
+      photo: photoUrl('1513104890138-7c749659a591'),
       rating: 4.2,
       category: 'Pizzeria',
       description: 'Pizzas artisanales cuites au four à bois.',
@@ -331,7 +331,7 @@ async function main() {
       phone: '338901188',
       address: 'Route de Ngor, Yoff, Dakar',
       image: '🍣',
-      photo: photoUrl('sushi', 209),
+      photo: photoUrl('1579584425555-c3ce17fd4351'),
       rating: 4.4,
       category: 'Japonais',
       description: 'Sushis frais et cuisine japonaise à Dakar.',
@@ -351,7 +351,7 @@ async function main() {
       phone: '338111199',
       address: 'Almadies, Dakar',
       image: '🍜',
-      photo: photoUrl('thaicurry', 210),
+      photo: photoUrl('1455619452474-d2be8b1e70cd'),
       rating: 4.5,
       category: 'Asiatique',
       description: 'Saveurs thaïlandaises authentiques dans un cadre verdoyant.',
@@ -374,7 +374,7 @@ async function main() {
       phone: '338221100',
       address: 'Route de Ouakam, Mermoz, Dakar',
       image: '🍗',
-      photo: photoUrl('chickenfry', 211),
+      photo: photoUrl('1562967914-608f82629710'),
       rating: 4.3,
       category: 'Fast Food',
       description: 'Poulet frit croustillant, la référence mondiale à Dakar.',
@@ -394,7 +394,7 @@ async function main() {
       phone: '338331101',
       address: 'Route de Ouakam, Dakar',
       image: '🍔',
-      photo: photoUrl('burger', 212),
+      photo: photoUrl('1568901346375-23c9450c58cd'),
       rating: 4.6,
       category: 'Fast Food',
       description: 'Burgers gourmands façon brésilienne, une valeur sûre à Dakar.',
@@ -414,7 +414,7 @@ async function main() {
       phone: '338441102',
       address: 'Ouakam, Dakar',
       image: '🍕',
-      photo: photoUrl('fastfoodpizza', 213),
+      photo: photoUrl('1565299624946-b28f40a0ae38'),
       rating: 4.4,
       category: 'Fast Food',
       description: 'Pizzas, tacos et snacks livrés rapidement.',
@@ -434,7 +434,7 @@ async function main() {
       phone: '338551103',
       address: 'Sacré-Cœur, Dakar',
       image: '🌯',
-      photo: photoUrl('kebabgrill', 214),
+      photo: photoUrl('1529042410759-befb1204b468'),
       rating: 4.5,
       category: 'Fast Food',
       description: 'Kebabs savoureux et snacks variés, réputés à Dakar.',
@@ -454,7 +454,7 @@ async function main() {
       phone: '338661104',
       address: 'Plateau, Dakar',
       image: '🥐',
-      photo: photoUrl('frenchbakery', 215),
+      photo: photoUrl('1509440159596-0249088772ff'),
       rating: 4.4,
       category: 'Fast Food',
       description: 'Chaîne locale fondée en 2002 : viennoiseries, sandwichs et snacks.',
