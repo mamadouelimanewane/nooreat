@@ -1,6 +1,7 @@
 "use client"
 
 import { use, useEffect, useMemo, useState } from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Plus, Minus, Star, Clock, Bike, ShoppingBag } from "lucide-react"
 import { getCart, setItemQuantity, cartTotal, cartCount, type Cart } from "@/lib/clientCart"
@@ -19,6 +20,7 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [cart, setCart] = useState<Cart | null>(null)
+  const [photoBroken, setPhotoBroken] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -68,8 +70,17 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
     <div className="pb-28">
       {/* Hero banner */}
       <div className="relative bg-gradient-to-br from-neutral-100 to-neutral-50 h-40 sm:h-52 flex items-center justify-center overflow-hidden">
-        {store.photo ? (
-          <img src={store.photo} alt={store.name} className="w-full h-full object-cover" />
+        {store.photo && !photoBroken ? (
+          <Image
+            src={store.photo}
+            alt={store.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            quality={60}
+            priority
+            onError={() => setPhotoBroken(true)}
+            className="object-cover"
+          />
         ) : (
           <span className="text-7xl sm:text-8xl">{store.emoji}</span>
         )}
@@ -122,17 +133,17 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
                     {qty === 0 ? (
                       <button
                         onClick={() => updateQty(p, 1)}
-                        className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-700 hover:border-black hover:text-black transition shrink-0"
+                        className="w-11 h-11 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-700 hover:border-black hover:text-black active:scale-95 transition shrink-0"
                       >
                         <Plus size={16} />
                       </button>
                     ) : (
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button onClick={() => updateQty(p, qty - 1)} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition">
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button onClick={() => updateQty(p, qty - 1)} className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:scale-95 transition">
                           <Minus size={14} />
                         </button>
-                        <span className="font-bold w-4 text-center">{qty}</span>
-                        <button onClick={() => updateQty(p, qty + 1)} className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-neutral-800 transition">
+                        <span className="font-bold w-6 text-center">{qty}</span>
+                        <button onClick={() => updateQty(p, qty + 1)} className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:bg-neutral-800 active:scale-95 transition">
                           <Plus size={14} />
                         </button>
                       </div>

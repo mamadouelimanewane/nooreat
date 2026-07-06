@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 import { Star, Clock, Search } from "lucide-react"
 
@@ -28,6 +29,7 @@ export default function ClientHome() {
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState("")
   const [activeCuisine, setActiveCuisine] = useState("Tout")
+  const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetch("/api/stores")
@@ -98,11 +100,16 @@ export default function ClientHome() {
           {filtered.map((s, i) => (
             <Link key={s.id} href={`/client/store/${s.id}`} className="group">
               <div className={`relative aspect-[4/3] rounded-2xl ${CARD_COLORS[i % CARD_COLORS.length]} flex items-center justify-center overflow-hidden mb-2.5`}>
-                {s.photo ? (
-                  <img
+                {s.photo && !brokenPhotos.has(s.id) ? (
+                  <Image
                     src={s.photo}
                     alt={s.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    fill
+                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                    quality={55}
+                    priority={i < 4}
+                    onError={() => setBrokenPhotos((prev) => new Set(prev).add(s.id))}
+                    className="object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                 ) : (
                   <span className="text-6xl group-hover:scale-110 transition-transform duration-200">{s.emoji}</span>
