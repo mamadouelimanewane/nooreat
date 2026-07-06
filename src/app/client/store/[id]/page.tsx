@@ -7,7 +7,7 @@ import { Plus, Minus, Star, Clock, Bike, ShoppingBag } from "lucide-react"
 import { getCart, setItemQuantity, cartTotal, cartCount, type Cart } from "@/lib/clientCart"
 import { CART_EVENT } from "../../layout"
 
-type Product = { id: string; name: string; price: number; description: string | null; image: string; category: string | null }
+type Product = { id: string; name: string; price: number; description: string | null; image: string; photo: string | null; category: string | null }
 type Store = {
   id: string; name: string; location: string | null; rating: number; deliveryTime: string
   minOrder: number; emoji: string; photo: string | null; cuisine: string; description: string | null; deliveryFee: number
@@ -21,6 +21,7 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
   const [loading, setLoading] = useState(true)
   const [cart, setCart] = useState<Cart | null>(null)
   const [photoBroken, setPhotoBroken] = useState(false)
+  const [brokenProductPhotos, setBrokenProductPhotos] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     Promise.all([
@@ -122,8 +123,20 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
                 const qty = quantities.get(p.id) ?? 0
                 return (
                   <div key={p.id} className="flex items-center gap-4 py-4">
-                    <div className="w-16 h-16 rounded-xl bg-neutral-50 flex items-center justify-center text-3xl shrink-0">
-                      {p.image}
+                    <div className="relative w-16 h-16 rounded-xl bg-neutral-50 flex items-center justify-center text-3xl shrink-0 overflow-hidden">
+                      {p.photo && !brokenProductPhotos.has(p.id) ? (
+                        <Image
+                          src={p.photo}
+                          alt={p.name}
+                          fill
+                          sizes="64px"
+                          quality={55}
+                          onError={() => setBrokenProductPhotos((prev) => new Set(prev).add(p.id))}
+                          className="object-cover"
+                        />
+                      ) : (
+                        p.image
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-[15px] truncate">{p.name}</div>

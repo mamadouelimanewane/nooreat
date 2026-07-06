@@ -15,6 +15,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       price: p.price,
       description: p.description,
       image: p.image || "📦",
+      photo: p.photo,
       category: p.category
     }))
 

@@ -84,6 +84,7 @@ model Product {
   description String?
   price       Float
   image       String?
+  photo       String?
   status      String   @default("Active")
   category    String?
   storeId     String

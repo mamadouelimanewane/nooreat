@@ -142,7 +142,7 @@ async function main() {
   console.log('✅ Driver created:', driver.email)
 
   // 7. Restaurants sénégalais + 5 fast-foods célèbres et connus de Dakar
-  type SeedProduct = { name: string; description: string; price: number; image: string; category: string }
+  type SeedProduct = { name: string; description: string; price: number; image: string; photo?: string; category: string }
   type SeedStore = {
     name: string
     email: string
@@ -178,11 +178,11 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '25-40 min',
       products: [
-        { name: 'Thiéboudienne rouge', description: 'Riz au poisson, sauce tomate et légumes', price: 3000, image: '🍚', category: 'Plats' },
-        { name: 'Thiéboudienne blanc', description: 'Riz au poisson, sauce blanche', price: 3000, image: '🍚', category: 'Plats' },
-        { name: 'Yassa poulet', description: 'Poulet mariné aux oignons et citron', price: 2500, image: '🍗', category: 'Plats' },
-        { name: 'Mafé viande', description: 'Sauce à l\'arachide, riz blanc', price: 2800, image: '🥘', category: 'Plats' },
-        { name: 'Bissap', description: 'Jus d\'hibiscus glacé', price: 500, image: '🥤', category: 'Boissons' },
+        { name: 'Thiéboudienne rouge', description: 'Riz au poisson, sauce tomate et légumes', price: 3000, image: '🍚', photo: photoUrl('1585937421612-70a008356fbe'), category: 'Plats' },
+        { name: 'Thiéboudienne blanc', description: 'Riz au poisson, sauce blanche', price: 3000, image: '🍚', photo: photoUrl('1604329760661-e71dc83f8f26'), category: 'Plats' },
+        { name: 'Yassa poulet', description: 'Poulet mariné aux oignons et citron', price: 2500, image: '🍗', photo: photoUrl('1598103442097-8b74394b95c6'), category: 'Plats' },
+        { name: 'Mafé viande', description: 'Sauce à l\'arachide, riz blanc', price: 2800, image: '🥘', photo: photoUrl('1516100882582-96c3a05fe590'), category: 'Plats' },
+        { name: 'Bissap', description: 'Jus d\'hibiscus glacé', price: 500, image: '🥤', photo: photoUrl('1544145945-f90425340c7e'), category: 'Boissons' },
       ],
     },
     {
@@ -199,10 +199,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '25-40 min',
       products: [
-        { name: 'Thiéboudienne au poisson', description: 'Plat national sénégalais', price: 3200, image: '🍚', category: 'Plats' },
-        { name: 'Yassa poisson', description: 'Poisson mariné aux oignons', price: 2700, image: '🐟', category: 'Plats' },
-        { name: 'Soupou kandia', description: 'Sauce gombo, riz blanc', price: 2900, image: '🥘', category: 'Plats' },
-        { name: 'Pastels', description: 'Beignets farcis au poisson', price: 1000, image: '🥟', category: 'Entrées' },
+        { name: 'Thiéboudienne au poisson', description: 'Plat national sénégalais', price: 3200, image: '🍚', photo: photoUrl('1567337710282-00832b415979'), category: 'Plats' },
+        { name: 'Yassa poisson', description: 'Poisson mariné aux oignons', price: 2700, image: '🐟', photo: photoUrl('1519708227418-c8fd9a32b7a2'), category: 'Plats' },
+        { name: 'Soupou kandia', description: 'Sauce gombo, riz blanc', price: 2900, image: '🥘', photo: photoUrl('1547592166-23ac45744acd'), category: 'Plats' },
+        { name: 'Pastels', description: 'Beignets farcis au poisson', price: 1000, image: '🥟', photo: photoUrl('1551504734-5ee1c4a1479b'), category: 'Entrées' },
       ],
     },
     {
@@ -219,10 +219,10 @@ async function main() {
       deliveryFee: 1200,
       deliveryTimeMinutes: '30-45 min',
       products: [
-        { name: 'Thiof braisé', description: 'Poisson thiof grillé, riz', price: 4500, image: '🐟', category: 'Plats' },
-        { name: 'Yassa poulet', description: 'Poulet mariné, oignons confits', price: 2600, image: '🍗', category: 'Plats' },
-        { name: 'Riz au poisson', description: 'Riz cassé, poisson braisé', price: 2900, image: '🍚', category: 'Plats' },
-        { name: 'Salade Djoloff', description: 'Salade fraîche de saison', price: 1500, image: '🥗', category: 'Entrées' },
+        { name: 'Thiof braisé', description: 'Poisson thiof grillé, riz', price: 4500, image: '🐟', photo: photoUrl('1595295333158-4742f28fbd85'), category: 'Plats' },
+        { name: 'Yassa poulet', description: 'Poulet mariné, oignons confits', price: 2600, image: '🍗', photo: photoUrl('1590846406792-0adc7f938f1d'), category: 'Plats' },
+        { name: 'Riz au poisson', description: 'Riz cassé, poisson braisé', price: 2900, image: '🍚', photo: photoUrl('1585937421612-70a008356fbe'), category: 'Plats' },
+        { name: 'Salade Djoloff', description: 'Salade fraîche de saison', price: 1500, image: '🥗', photo: photoUrl('1512621776951-a57141f2eefd'), category: 'Entrées' },
       ],
     },
     {
@@ -239,10 +239,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '25-40 min',
       products: [
-        { name: 'Mafé poulet', description: 'Sauce arachide, poulet fermier', price: 2700, image: '🥘', category: 'Plats' },
-        { name: 'Domoda', description: 'Ragoût de bœuf à l\'arachide', price: 2500, image: '🍲', category: 'Plats' },
-        { name: 'Thiakry', description: 'Dessert au mil et lait caillé', price: 800, image: '🍮', category: 'Desserts' },
-        { name: 'Jus de bissap', description: 'Boisson glacée à l\'hibiscus', price: 500, image: '🥤', category: 'Boissons' },
+        { name: 'Mafé poulet', description: 'Sauce arachide, poulet fermier', price: 2700, image: '🥘', photo: photoUrl('1544025162-d76694265947'), category: 'Plats' },
+        { name: 'Domoda', description: 'Ragoût de bœuf à l\'arachide', price: 2500, image: '🍲', photo: photoUrl('1603105037880-880cd4edfb0d'), category: 'Plats' },
+        { name: 'Thiakry', description: 'Dessert au mil et lait caillé', price: 800, image: '🍮', photo: photoUrl('1551024506-0bccd828d307'), category: 'Desserts' },
+        { name: 'Jus de bissap', description: 'Boisson glacée à l\'hibiscus', price: 500, image: '🥤', photo: photoUrl('1546173159-315724a31696'), category: 'Boissons' },
       ],
     },
     {
@@ -259,10 +259,10 @@ async function main() {
       deliveryFee: 1500,
       deliveryTimeMinutes: '35-50 min',
       products: [
-        { name: 'Plateau de fruits de mer', description: 'Assortiment de crustacés et coquillages', price: 8500, image: '🦐', category: 'Fruits de mer' },
-        { name: 'Langouste grillée', description: 'Langouste fraîche grillée au beurre', price: 9000, image: '🦞', category: 'Fruits de mer' },
-        { name: 'Crevettes à l\'ail', description: 'Crevettes sautées à l\'ail et persil', price: 4500, image: '🍤', category: 'Fruits de mer' },
-        { name: 'Poisson braisé', description: 'Poisson du jour, sauce citronnée', price: 4000, image: '🐟', category: 'Plats' },
+        { name: 'Plateau de fruits de mer', description: 'Assortiment de crustacés et coquillages', price: 8500, image: '🦐', photo: photoUrl('1565680018434-b513d5e5fd47'), category: 'Fruits de mer' },
+        { name: 'Langouste grillée', description: 'Langouste fraîche grillée au beurre', price: 9000, image: '🦞', photo: photoUrl('1625944230945-1b7dd3b949ab'), category: 'Fruits de mer' },
+        { name: 'Crevettes à l\'ail', description: 'Crevettes sautées à l\'ail et persil', price: 4500, image: '🍤', photo: photoUrl('1559847844-5315695dadae'), category: 'Fruits de mer' },
+        { name: 'Poisson braisé', description: 'Poisson du jour, sauce citronnée', price: 4000, image: '🐟', photo: photoUrl('1519708227418-c8fd9a32b7a2'), category: 'Plats' },
       ],
     },
     {
@@ -279,10 +279,10 @@ async function main() {
       deliveryFee: 1500,
       deliveryTimeMinutes: '35-50 min',
       products: [
-        { name: 'Homard grillé', description: 'Homard entier grillé au beurre citronné', price: 9500, image: '🦞', category: 'Fruits de mer' },
-        { name: 'Calamars frits', description: 'Calamars frits, sauce tartare', price: 3500, image: '🦑', category: 'Fruits de mer' },
-        { name: 'Soupe de poisson', description: 'Soupe de poisson traditionnelle', price: 2000, image: '🍲', category: 'Entrées' },
-        { name: 'Salade de la mer', description: 'Fruits de mer, vinaigrette légère', price: 3000, image: '🥗', category: 'Entrées' },
+        { name: 'Homard grillé', description: 'Homard entier grillé au beurre citronné', price: 9500, image: '🦞', photo: photoUrl('1553621042-f6e147245754'), category: 'Fruits de mer' },
+        { name: 'Calamars frits', description: 'Calamars frits, sauce tartare', price: 3500, image: '🦑', photo: photoUrl('1599487488170-d11ec9c172f0'), category: 'Fruits de mer' },
+        { name: 'Soupe de poisson', description: 'Soupe de poisson traditionnelle', price: 2000, image: '🍲', photo: photoUrl('1547592166-23ac45744acd'), category: 'Entrées' },
+        { name: 'Salade de la mer', description: 'Fruits de mer, vinaigrette légère', price: 3000, image: '🥗', photo: photoUrl('1540420773420-3366772f4999'), category: 'Entrées' },
       ],
     },
     {
@@ -299,10 +299,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '20-35 min',
       products: [
-        { name: 'Dibi mouton', description: 'Mouton grillé, oignons et moutarde', price: 3500, image: '🍖', category: 'Grillades' },
-        { name: 'Brochettes de bœuf', description: '4 brochettes marinées grillées', price: 2500, image: '🍢', category: 'Grillades' },
-        { name: 'Poulet braisé', description: 'Demi-poulet mariné braisé', price: 2800, image: '🍗', category: 'Grillades' },
-        { name: 'Frites maison', description: 'Frites fraîches croustillantes', price: 1000, image: '🍟', category: 'Accompagnements' },
+        { name: 'Dibi mouton', description: 'Mouton grillé, oignons et moutarde', price: 3500, image: '🍖', photo: photoUrl('1529193591184-b1d58069ecdd'), category: 'Grillades' },
+        { name: 'Brochettes de bœuf', description: '4 brochettes marinées grillées', price: 2500, image: '🍢', photo: photoUrl('1580217593608-61931cefc821'), category: 'Grillades' },
+        { name: 'Poulet braisé', description: 'Demi-poulet mariné braisé', price: 2800, image: '🍗', photo: photoUrl('1598103442097-8b74394b95c6'), category: 'Grillades' },
+        { name: 'Frites maison', description: 'Frites fraîches croustillantes', price: 1000, image: '🍟', photo: photoUrl('1573080496219-bb080dd4f877'), category: 'Accompagnements' },
       ],
     },
     {
@@ -319,10 +319,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '25-40 min',
       products: [
-        { name: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic', price: 4000, image: '🍕', category: 'Pizzas' },
-        { name: 'Pizza 4 fromages', description: 'Mozzarella, chèvre, bleu, parmesan', price: 5000, image: '🍕', category: 'Pizzas' },
-        { name: 'Pizza Pepperoni', description: 'Pepperoni épicé, mozzarella', price: 4500, image: '🍕', category: 'Pizzas' },
-        { name: 'Tiramisu', description: 'Dessert italien classique', price: 1500, image: '🍰', category: 'Desserts' },
+        { name: 'Pizza Margherita', description: 'Tomate, mozzarella, basilic', price: 4000, image: '🍕', photo: photoUrl('1513104890138-7c749659a591'), category: 'Pizzas' },
+        { name: 'Pizza 4 fromages', description: 'Mozzarella, chèvre, bleu, parmesan', price: 5000, image: '🍕', photo: photoUrl('1548369937-47519962c11a'), category: 'Pizzas' },
+        { name: 'Pizza Pepperoni', description: 'Pepperoni épicé, mozzarella', price: 4500, image: '🍕', photo: photoUrl('1513104890138-7c749659a591'), category: 'Pizzas' },
+        { name: 'Tiramisu', description: 'Dessert italien classique', price: 1500, image: '🍰', photo: photoUrl('1563805042-7684c019e1cb'), category: 'Desserts' },
       ],
     },
     {
@@ -339,10 +339,10 @@ async function main() {
       deliveryFee: 1500,
       deliveryTimeMinutes: '30-45 min',
       products: [
-        { name: 'Plateau California (12 pcs)', description: 'Avocat, surimi, concombre', price: 6000, image: '🍣', category: 'Sushis' },
-        { name: 'Plateau Saumon (12 pcs)', description: 'Saumon frais, riz vinaigré', price: 6500, image: '🍣', category: 'Sushis' },
-        { name: 'Nouilles Yakisoba', description: 'Nouilles sautées, légumes, poulet', price: 3000, image: '🍜', category: 'Plats' },
-        { name: 'Soupe miso', description: 'Soupe miso traditionnelle', price: 1500, image: '🍲', category: 'Entrées' },
+        { name: 'Plateau California (12 pcs)', description: 'Avocat, surimi, concombre', price: 6000, image: '🍣', photo: photoUrl('1579584425555-c3ce17fd4351'), category: 'Sushis' },
+        { name: 'Plateau Saumon (12 pcs)', description: 'Saumon frais, riz vinaigré', price: 6500, image: '🍣', photo: photoUrl('1553621042-f6e147245754'), category: 'Sushis' },
+        { name: 'Nouilles Yakisoba', description: 'Nouilles sautées, légumes, poulet', price: 3000, image: '🍜', photo: photoUrl('1569058242567-93de6f36f8e6'), category: 'Plats' },
+        { name: 'Soupe miso', description: 'Soupe miso traditionnelle', price: 1500, image: '🍲', photo: photoUrl('1547592166-23ac45744acd'), category: 'Entrées' },
       ],
     },
     {
@@ -359,10 +359,10 @@ async function main() {
       deliveryFee: 1200,
       deliveryTimeMinutes: '30-45 min',
       products: [
-        { name: 'Pad Thaï poulet', description: 'Nouilles sautées, poulet, cacahuètes', price: 3500, image: '🍜', category: 'Plats' },
-        { name: 'Curry vert', description: 'Curry vert thaï, lait de coco', price: 3800, image: '🍛', category: 'Plats' },
-        { name: 'Nems (6 pcs)', description: 'Nems croustillants, sauce nuoc-mâm', price: 2000, image: '🥟', category: 'Entrées' },
-        { name: 'Riz sauté', description: 'Riz sauté aux légumes', price: 2200, image: '🍚', category: 'Accompagnements' },
+        { name: 'Pad Thaï poulet', description: 'Nouilles sautées, poulet, cacahuètes', price: 3500, image: '🍜', photo: photoUrl('1455619452474-d2be8b1e70cd'), category: 'Plats' },
+        { name: 'Curry vert', description: 'Curry vert thaï, lait de coco', price: 3800, image: '🍛', photo: photoUrl('1569058242567-93de6f36f8e6'), category: 'Plats' },
+        { name: 'Nems (6 pcs)', description: 'Nems croustillants, sauce nuoc-mâm', price: 2000, image: '🥟', photo: photoUrl('1565299507177-b0ac66763828'), category: 'Entrées' },
+        { name: 'Riz sauté', description: 'Riz sauté aux légumes', price: 2200, image: '🍚', photo: photoUrl('1604329760661-e71dc83f8f26'), category: 'Accompagnements' },
       ],
     },
   ]
@@ -382,10 +382,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '20-35 min',
       products: [
-        { name: 'Bucket 8 pièces', description: 'Poulet frit croustillant x8', price: 6500, image: '🍗', category: 'Poulet' },
-        { name: 'Zinger Burger', description: 'Burger poulet épicé croustillant', price: 2500, image: '🍔', category: 'Burgers' },
-        { name: 'Menu Tenders (3 pcs)', description: 'Tenders de poulet, frites, boisson', price: 3000, image: '🍗', category: 'Menus' },
-        { name: 'Frites', description: 'Frites croustillantes', price: 1000, image: '🍟', category: 'Accompagnements' },
+        { name: 'Bucket 8 pièces', description: 'Poulet frit croustillant x8', price: 6500, image: '🍗', photo: photoUrl('1590846406792-0adc7f938f1d'), category: 'Poulet' },
+        { name: 'Zinger Burger', description: 'Burger poulet épicé croustillant', price: 2500, image: '🍔', photo: photoUrl('1568901346375-23c9450c58cd'), category: 'Burgers' },
+        { name: 'Menu Tenders (3 pcs)', description: 'Tenders de poulet, frites, boisson', price: 3000, image: '🍗', photo: photoUrl('1598103442097-8b74394b95c6'), category: 'Menus' },
+        { name: 'Frites', description: 'Frites croustillantes', price: 1000, image: '🍟', photo: photoUrl('1541592106381-b31e9677c0e5'), category: 'Accompagnements' },
       ],
     },
     {
@@ -402,10 +402,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '20-35 min',
       products: [
-        { name: 'Brasil Cheese Burger', description: 'Steak haché, cheddar, sauce maison', price: 3200, image: '🍔', category: 'Burgers' },
-        { name: 'Double Bacon Burger', description: 'Double steak, bacon, cheddar', price: 3800, image: '🍔', category: 'Burgers' },
-        { name: 'Chicken Burger', description: 'Poulet pané croustillant', price: 2800, image: '🍔', category: 'Burgers' },
-        { name: 'Milkshake', description: 'Vanille, chocolat ou fraise', price: 1500, image: '🥤', category: 'Boissons' },
+        { name: 'Brasil Cheese Burger', description: 'Steak haché, cheddar, sauce maison', price: 3200, image: '🍔', photo: photoUrl('1568901346375-23c9450c58cd'), category: 'Burgers' },
+        { name: 'Double Bacon Burger', description: 'Double steak, bacon, cheddar', price: 3800, image: '🍔', photo: photoUrl('1571091718767-18b5b1457add'), category: 'Burgers' },
+        { name: 'Chicken Burger', description: 'Poulet pané croustillant', price: 2800, image: '🍔', photo: photoUrl('1568901346375-23c9450c58cd'), category: 'Burgers' },
+        { name: 'Milkshake', description: 'Vanille, chocolat ou fraise', price: 1500, image: '🥤', photo: photoUrl('1544145945-f90425340c7e'), category: 'Boissons' },
       ],
     },
     {
@@ -422,10 +422,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '20-35 min',
       products: [
-        { name: 'Pizza 4 saisons', description: 'Jambon, champignons, olives, poivrons', price: 4000, image: '🍕', category: 'Pizzas' },
-        { name: 'Tacos poulet', description: 'Tacos généreux au poulet, sauce fromagère', price: 2500, image: '🌮', category: 'Tacos' },
-        { name: 'Panini', description: 'Panini jambon fromage grillé', price: 2000, image: '🥪', category: 'Sandwichs' },
-        { name: 'Coupe glacée', description: 'Glace, chantilly, coulis', price: 1500, image: '🍨', category: 'Desserts' },
+        { name: 'Pizza 4 saisons', description: 'Jambon, champignons, olives, poivrons', price: 4000, image: '🍕', photo: photoUrl('1548369937-47519962c11a'), category: 'Pizzas' },
+        { name: 'Tacos poulet', description: 'Tacos généreux au poulet, sauce fromagère', price: 2500, image: '🌮', photo: photoUrl('1551504734-5ee1c4a1479b'), category: 'Tacos' },
+        { name: 'Panini', description: 'Panini jambon fromage grillé', price: 2000, image: '🥪', photo: photoUrl('1571091718767-18b5b1457add'), category: 'Sandwichs' },
+        { name: 'Coupe glacée', description: 'Glace, chantilly, coulis', price: 1500, image: '🍨', photo: photoUrl('1551024506-0bccd828d307'), category: 'Desserts' },
       ],
     },
     {
@@ -442,10 +442,10 @@ async function main() {
       deliveryFee: 1000,
       deliveryTimeMinutes: '15-30 min',
       products: [
-        { name: 'Kebab classique', description: 'Viande grillée, crudités, sauce blanche', price: 2000, image: '🌯', category: 'Kebabs' },
-        { name: 'Kebab galette', description: 'Galette garnie, viande, frites', price: 2200, image: '🌯', category: 'Kebabs' },
-        { name: 'Assiette kebab', description: 'Viande, riz, salade', price: 3000, image: '🍽️', category: 'Assiettes' },
-        { name: 'Tacos viande hachée', description: 'Tacos généreux, sauce fromagère', price: 2200, image: '🌮', category: 'Tacos' },
+        { name: 'Kebab classique', description: 'Viande grillée, crudités, sauce blanche', price: 2000, image: '🌯', photo: photoUrl('1529042410759-befb1204b468'), category: 'Kebabs' },
+        { name: 'Kebab galette', description: 'Galette garnie, viande, frites', price: 2200, image: '🌯', photo: photoUrl('1580217593608-61931cefc821'), category: 'Kebabs' },
+        { name: 'Assiette kebab', description: 'Viande, riz, salade', price: 3000, image: '🍽️', photo: photoUrl('1529042410759-befb1204b468'), category: 'Assiettes' },
+        { name: 'Tacos viande hachée', description: 'Tacos généreux, sauce fromagère', price: 2200, image: '🌮', photo: photoUrl('1565299507177-b0ac66763828'), category: 'Tacos' },
       ],
     },
     {
@@ -462,10 +462,10 @@ async function main() {
       deliveryFee: 800,
       deliveryTimeMinutes: '15-30 min',
       products: [
-        { name: 'Croissant', description: 'Croissant pur beurre', price: 500, image: '🥐', category: 'Viennoiseries' },
-        { name: 'Sandwich Shawarma', description: 'Shawarma poulet, crudités', price: 2000, image: '🌯', category: 'Sandwichs' },
-        { name: 'Pain au chocolat', description: 'Viennoiserie pur beurre', price: 500, image: '🥐', category: 'Viennoiseries' },
-        { name: 'Café + viennoiserie', description: 'Formule petit-déjeuner', price: 1200, image: '☕', category: 'Formules' },
+        { name: 'Croissant', description: 'Croissant pur beurre', price: 500, image: '🥐', photo: photoUrl('1509440159596-0249088772ff'), category: 'Viennoiseries' },
+        { name: 'Sandwich Shawarma', description: 'Shawarma poulet, crudités', price: 2000, image: '🌯', photo: photoUrl('1529042410759-befb1204b468'), category: 'Sandwichs' },
+        { name: 'Pain au chocolat', description: 'Viennoiserie pur beurre', price: 500, image: '🥐', photo: photoUrl('1555507036-ab1f4038808a'), category: 'Viennoiseries' },
+        { name: 'Café + viennoiserie', description: 'Formule petit-déjeuner', price: 1200, image: '☕', photo: photoUrl('1509042239860-f550ce710b93'), category: 'Formules' },
       ],
     },
   ]
@@ -509,10 +509,16 @@ async function main() {
             description: p.description,
             price: p.price,
             image: p.image,
+            photo: p.photo,
             status: 'Active',
             category: p.category,
             storeId: createdStore.id,
           },
+        })
+      } else {
+        await prisma.product.update({
+          where: { id: existingProd.id },
+          data: { photo: p.photo, description: p.description, price: p.price },
         })
       }
     }
